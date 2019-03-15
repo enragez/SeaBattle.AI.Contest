@@ -1,0 +1,5 @@
+.idea/
+Debug/
+Release/
+.vs/
+*.DotSettings.user
