@@ -11,11 +11,17 @@ namespace SeaWarsEngine.Models
         
         public int PlayerId { get; }
         
-        internal TurnResult(Coordinate coordinate, int playerId)
+        internal int ParticipantId { get; }
+        
+        internal int Id { get; }
+        
+        internal TurnResult(Coordinate coordinate, int playerId, int participantId, int id)
         {
             Coordinate = coordinate;
             NewCellState = CellState.Empty;
             PlayerId = playerId;
+            ParticipantId = participantId;
+            Id = id;
         }
 
         public override string ToString()

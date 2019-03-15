@@ -2,6 +2,7 @@ namespace SeaWarsEngine
 {
     using System;
     using System.Collections.Generic;
+    using System.Drawing.Text;
     using System.Linq;
     using Models;
 
@@ -10,8 +11,6 @@ namespace SeaWarsEngine
         private Player _player1;
 
         private Player _player2;
-
-        private readonly Dictionary<int, string> _dllPaths = new Dictionary<int, string>();
 
         private readonly Dictionary<int, Fields> _fields = new Dictionary<int, Fields>();
 
@@ -22,20 +21,37 @@ namespace SeaWarsEngine
         private Field _startPlayer1Field;
 
         private Field _startPlayer2Field;
+        
+        private readonly Participant[] _participants = new Participant[2];
+        
+        private readonly Dictionary<int, int> _ids = new Dictionary<int, int>();
+        
+        private readonly Queue<TurnResult> _turnsHistory = new Queue<TurnResult>();
 
-        public Engine(string strategy1DllPath, string strategy2DllPath)
+        private readonly DateTime _gameStartTime;
+
+        private readonly int _gameId;
+        
+        public Engine(int gameId, Participant participant1, Participant participant2)
         {
-            _dllPaths.Add(1, strategy1DllPath);
-            _dllPaths.Add(2, strategy2DllPath);
-
+            _gameId = gameId;
+            
+            _fields.Add(0, new Fields());
             _fields.Add(1, new Fields());
-            _fields.Add(2, new Fields());
+
+            _participants[0] = participant1;
+            _ids.Add(participant1.Id, 0);
+            
+            _participants[1] = participant2;
+            _ids.Add(participant2.Id, 1);
+
+            _gameStartTime = DateTime.Now;
         }
 
         public GameResult StartGame()
         {
-            _player1 = CreatePlayer(1);
-            _player2 = CreatePlayer(2);
+            _player1 = CreatePlayer(_participants[0]);
+            _player2 = CreatePlayer(_participants[1]);
             
             _player1.GamePhaseChanged(GamePhase.Planning);
             _player2.GamePhaseChanged(GamePhase.Planning);
@@ -66,14 +82,18 @@ namespace SeaWarsEngine
 
             var currentStrategy = _currentTurnPlayer.Strategy;
 
+            var turnCounter = -1;
+            
             var turnCoordinates = currentStrategy.DoTurn(new TurnResult(new Coordinate(-1, -1), 
-                                                                        _currentTurnPlayer.Id));
-
+                                                                        _currentTurnPlayer.Id,
+                                                                        _participants[_currentTurnPlayer.Id].Id,
+                                                                        turnCounter));
+            turnCounter++;
             var turn = new Turn(turnCoordinates);
 
             while (true)
             {
-                var turnResult = new TurnResult(turnCoordinates, _currentTurnPlayer.Id);
+                var turnResult = new TurnResult(turnCoordinates, _currentTurnPlayer.Id, _participants[_currentTurnPlayer.Id].Id, turnCounter);
                 
                 if (!turn.IsValid())
                 {
@@ -81,6 +101,7 @@ namespace SeaWarsEngine
 
                     turnResult.NewCellState = CellState.Empty;
                     _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
+                    _turnsHistory.Enqueue(turnResult);
 
                     _currentTurnPlayer = GetPlayer(SwapId(currentTurnPlayerId));
                     _enemyPlayer = GetPlayer(currentTurnPlayerId);
@@ -98,16 +119,21 @@ namespace SeaWarsEngine
                         PerformKill(_currentTurnPlayer, _enemyPlayer, turn);
                         turnResult.NewCellState = CellState.Kill;
                         _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
+                        _turnsHistory.Enqueue(turnResult);
 
                         if (IsPlayerLost(_enemyPlayer.Id))
                         {
                             return new GameResult
                                    {
-                                       WinnerId = _currentTurnPlayer.Id,
-                                       Player1StartField = _startPlayer1Field,
-                                       Player2StartField = _startPlayer2Field,
-                                       Player1TurnsHistory = _player1.TurnsHistory,
-                                       Player2TurnsHistory = _player2.TurnsHistory
+                                       Id = _gameId,
+                                       StartTime = _gameStartTime,
+                                       EndTime = DateTime.Now,
+                                       Participant1 = _participants[0],
+                                       Participant2 = _participants[1],
+                                       Winner = _participants[_currentTurnPlayer.Id],
+                                       TurnsHistory = _turnsHistory,
+                                       Participant1StartField = _startPlayer1Field,
+                                       Participant2StartField = _startPlayer2Field
                                    };
                        }
                     }
@@ -115,6 +141,7 @@ namespace SeaWarsEngine
                     {
                         turnResult.NewCellState = CellState.Hit;
                         _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
+                        _turnsHistory.Enqueue(turnResult);
                     }
                 }
                 else
@@ -122,6 +149,7 @@ namespace SeaWarsEngine
                     PerformMiss(_currentTurnPlayer, _enemyPlayer, turn);
                     turnResult.NewCellState = CellState.Miss;
                     _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
+                    _turnsHistory.Enqueue(turnResult);
 
                     var currentTurnPlayerId = _currentTurnPlayer.Id;
 
@@ -130,13 +158,14 @@ namespace SeaWarsEngine
                 }
 
                 turnCoordinates = _currentTurnPlayer.Strategy.DoTurn(turnResult);
+                turnCounter++;
                 turn = new Turn(turnCoordinates);
             }
         }
 
         private Player GetPlayer(int playerId)
         {
-            return playerId == 1 ? _player1 : _player2;
+            return playerId == 0 ? _player1 : _player2;
         }
 
         private bool TurnHitsEnemy(Player enemy, Turn turn)
@@ -216,30 +245,32 @@ namespace SeaWarsEngine
         
         private int CoinFlip()
         {
-            return new Random().Next(1, 2);
+            return new Random().Next(0, 1);
         }
 
         private int SwapId(int currentId)
         {
-            return currentId == 1
-                       ? 2
-                       : 1;
+            return currentId == 0
+                       ? 1
+                       : 0;
         }
 
-        private Player CreatePlayer(int playerId)
+        private Player CreatePlayer(Participant participant)
         {
-            var dllPath = _dllPaths[playerId];
+            var participantIndex = _ids[participant.Id];
+            
+            var dllPath = participant.StrategyAssemblyPath;
 
-            var playerField = _fields[playerId].Field;
+            var playerField = _fields[participantIndex].Field;
 
-            var enemyField = _fields[SwapId(playerId)].FieldForEnemy;
+            var enemyField = _fields[SwapId(participantIndex)].FieldForEnemy;
 
             var strategyWrapper = CreateStrategyWrapper(dllPath);
-            strategyWrapper.Setup(playerField, enemyField, playerId);
+            strategyWrapper.Setup(playerField, enemyField, participantIndex);
 
             return new Player
                    {
-                       Id = playerId,
+                       Id = participantIndex,
                        Field = playerField,
                        EnemyField = enemyField,
                        Strategy = strategyWrapper,

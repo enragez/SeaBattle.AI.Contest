@@ -1,17 +1,26 @@
 namespace SeaWarsEngine.Models
 {
+    using System;
     using System.Collections.Generic;
 
     public class GameResult
     {
-        public int WinnerId { get; set; }
+        public int Id { get; set; }
         
-        public Field Player1StartField { get; set; }
+        public DateTime StartTime { get; set; }
         
-        public Field Player2StartField { get; set; }
+        public DateTime EndTime { get; set; }
         
-        public IEnumerable<TurnResult> Player1TurnsHistory { get; set; }
+        public Participant Winner { get; set; }
         
-        public IEnumerable<TurnResult> Player2TurnsHistory { get; set; }
+        public Participant Participant1 { get; set; }
+        
+        public Participant Participant2 { get; set; }
+        
+        public Field Participant1StartField { get; set; }
+        
+        public Field Participant2StartField { get; set; }
+        
+        public IEnumerable<TurnResult> TurnsHistory { get; set; }
     }
 }

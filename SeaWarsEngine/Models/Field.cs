@@ -156,11 +156,6 @@ namespace SeaWarsEngine.Models
                     throw new CheatDetectedException("В очко себе затолкай такой корабль");
             }
         }
-
-        private readonly List<string> _columnNames = new List<string>
-                                                     {
-                                                         "А","Б","В","Г","Д","Е","Ж","З","И","К"
-                                                     };
         
         internal DataTable DataTable
         {
@@ -168,7 +163,7 @@ namespace SeaWarsEngine.Models
             {
                 var dataTable = new DataTable("Поле");
                 dataTable.Columns.Add(" ");
-                foreach (var column in _columnNames)
+                foreach (var column in ColumnNamesHelper.ColumnNames)
                 {
                     dataTable.Columns.Add(column);
                 }
