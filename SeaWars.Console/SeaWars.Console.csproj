@@ -8,7 +8,7 @@
         <OutputType>Exe</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
         <RootNamespace>ConsoleViewer</RootNamespace>
-        <AssemblyName>ConsoleViewer</AssemblyName>
+        <AssemblyName>SeaWars.Console</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
     </PropertyGroup>
@@ -42,13 +42,13 @@
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\PracticeStrategies\PracticeStrategies.csproj">
-        <Project>{4f7a6fa3-6f96-4535-9e5d-83322d322828}</Project>
-        <Name>PracticeStrategies</Name>
-      </ProjectReference>
-      <ProjectReference Include="..\SeaWarsEngine\SeaWarsEngine.csproj">
+      <ProjectReference Include="..\SeaWars.Engine\SeaWars.Engine.csproj">
         <Project>{76bd5831-d5b1-4881-b0cb-83d02043277e}</Project>
-        <Name>SeaWarsEngine</Name>
+        <Name>SeaWars.Engine</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\SeaWars.Practice\SeaWars.Practice.csproj">
+        <Project>{4f7a6fa3-6f96-4535-9e5d-83322d322828}</Project>
+        <Name>SeaWars.Practice</Name>
       </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
