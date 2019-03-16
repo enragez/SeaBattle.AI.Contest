@@ -4,3 +4,4 @@ Release/
 .vs/
 *.DotSettings.user
 SeaWars.Server/bin/
+packages/
