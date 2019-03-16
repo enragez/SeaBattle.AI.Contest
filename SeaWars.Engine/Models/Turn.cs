@@ -1,4 +1,4 @@
-namespace SeaWarsEngine.Models
+namespace SeaWars.Engine.Models
 {
     internal class Turn
     {

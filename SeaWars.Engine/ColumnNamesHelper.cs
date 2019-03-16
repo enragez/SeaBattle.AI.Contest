@@ -1,4 +1,4 @@
-namespace SeaWarsEngine
+namespace SeaWars.Engine
 {
     using System.Collections.Generic;
 

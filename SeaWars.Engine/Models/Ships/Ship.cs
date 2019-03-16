@@ -1,7 +1,8 @@
-namespace SeaWarsEngine.Models
+namespace SeaWars.Engine.Models.Ships
 {
     using System;
     using System.Collections.Generic;
+    using Exceptions;
 
     public abstract class Ship
     {

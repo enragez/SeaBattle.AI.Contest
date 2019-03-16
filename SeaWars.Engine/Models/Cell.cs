@@ -1,5 +1,7 @@
-namespace SeaWarsEngine.Models
+namespace SeaWars.Engine.Models
 {
+    using Exceptions;
+
     internal class Cell
     {
         public CellState State { get; private set; }

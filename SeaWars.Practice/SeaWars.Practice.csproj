@@ -7,7 +7,7 @@
         <ProjectGuid>{4F7A6FA3-6F96-4535-9E5D-83322D322828}</ProjectGuid>
         <OutputType>Library</OutputType>
         <AppDesignerFolder>Properties</AppDesignerFolder>
-        <RootNamespace>PracticeStrategies</RootNamespace>
+        <RootNamespace>SeaWars.Practice</RootNamespace>
         <AssemblyName>SeaWars.Practice</AssemblyName>
         <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
@@ -33,18 +33,18 @@
     </PropertyGroup>
     <ItemGroup>
       <Compile Include="Practice.cs" />
-      <Compile Include="Resources1.Designer.cs" />
+      <Compile Include="Strategies\Cycle.cs" />
+      <Compile Include="Strategies\FullRandom.cs" />
       <Compile Include="StrategyType.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <EmbeddedResource Include="Resources1.resx" />
     </ItemGroup>
     <ItemGroup>
       <Reference Include="System" />
     </ItemGroup>
     <ItemGroup>
-      <EmbeddedResource Include="CycleStrategy.dll" />
-      <EmbeddedResource Include="FullRandomStrategy.dll" />
+      <ProjectReference Include="..\SeaWars.Engine\SeaWars.Engine.csproj">
+        <Project>{76bd5831-d5b1-4881-b0cb-83d02043277e}</Project>
+        <Name>SeaWars.Engine</Name>
+      </ProjectReference>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

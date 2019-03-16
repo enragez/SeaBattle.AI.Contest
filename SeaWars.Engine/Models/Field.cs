@@ -1,8 +1,10 @@
-namespace SeaWarsEngine.Models
+namespace SeaWars.Engine.Models
 {
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using Exceptions;
+    using Ships;
 
     public class Field
     {

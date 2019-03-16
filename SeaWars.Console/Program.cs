@@ -1,9 +1,9 @@
-﻿namespace ConsoleViewer
+﻿namespace SeaWars.Console
 {
     using System;
-    using PracticeStrategies;
-    using SeaWarsEngine;
-    using SeaWarsEngine.Models;
+    using Engine;
+    using Engine.Models;
+    using Practice;
 
     internal class Program
     {
@@ -14,18 +14,18 @@
             var participant1 = new Participant
                                {
                                    Id = rnd.Next(0, 100),
-                                   StrategyAssemblyPath = Practice.GetStrategy(StrategyType.Cycle)
+                                   Strategy = Practice.GetStrategy(StrategyType.Cycle)
                                };
             
             var participant2 = new Participant
                                {
                                    Id = rnd.Next(100, 200),
-                                   StrategyAssemblyPath = Practice.GetStrategy(StrategyType.FullRandom)
+                                   Strategy = Practice.GetStrategy(StrategyType.FullRandom)
                                };
 
             var gameId = rnd.Next(0, 100);
             
-            var engine = new SeaWarsEngine.Engine(gameId, participant1, participant2);
+            var engine = new Engine(gameId, participant1, participant2);
             
             var result = engine.StartGame();
 

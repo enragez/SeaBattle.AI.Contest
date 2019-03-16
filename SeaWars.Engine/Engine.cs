@@ -1,10 +1,10 @@
-namespace SeaWarsEngine
+namespace SeaWars.Engine
 {
     using System;
     using System.Collections.Generic;
-    using System.Drawing.Text;
     using System.Linq;
     using Models;
+    using Models.Ships;
 
     public class Engine
     {
@@ -260,12 +260,14 @@ namespace SeaWarsEngine
             var participantIndex = _ids[participant.Id];
             
             var dllPath = participant.StrategyAssemblyPath;
-
             var playerField = _fields[participantIndex].Field;
 
             var enemyField = _fields[SwapId(participantIndex)].FieldForEnemy;
 
-            var strategyWrapper = CreateStrategyWrapper(dllPath);
+            var strategyWrapper = !string.IsNullOrEmpty(dllPath)
+                                      ? CreateStrategyWrapper(dllPath)
+                                      : CreateStrategyWrapper(participant.Strategy);
+            
             strategyWrapper.Setup(playerField, enemyField, participantIndex);
 
             return new Player
@@ -281,6 +283,11 @@ namespace SeaWarsEngine
         private StrategyWrapper CreateStrategyWrapper(string dllPath)
         {
             return new StrategyWrapper(dllPath);
+        }
+
+        private StrategyWrapper CreateStrategyWrapper(PlayerStrategy strategy)
+        {
+            return new StrategyWrapper(strategy);
         }
     }
 }

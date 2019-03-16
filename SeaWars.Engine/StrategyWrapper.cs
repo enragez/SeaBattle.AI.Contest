@@ -1,9 +1,10 @@
-namespace SeaWarsEngine
+namespace SeaWars.Engine
 {
     using System;
     using System.Linq;
     using System.Reflection;
     using System.Security;
+    using Exceptions;
     using Models;
 
     internal class StrategyWrapper
@@ -26,6 +27,11 @@ namespace SeaWarsEngine
             var strategy = Activator.CreateInstance(type);
 
             _strategy = (PlayerStrategy) strategy;
+        }
+
+        internal StrategyWrapper(PlayerStrategy strategy)
+        {
+            _strategy = strategy;
         }
 
         internal void Setup(Field playerField, Field enemyField, int playerId)
