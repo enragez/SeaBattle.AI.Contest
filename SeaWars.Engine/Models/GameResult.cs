@@ -21,6 +21,6 @@ namespace SeaWars.Engine.Models
         
         public Field Participant2StartField { get; set; }
         
-        public IEnumerable<TurnResult> TurnsHistory { get; set; }
+        public IEnumerable<ExtendedTurnResult> TurnsHistory { get; set; }
     }
 }

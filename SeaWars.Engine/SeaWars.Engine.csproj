@@ -52,6 +52,7 @@
         <Compile Include="Models\Cell.cs" />
         <Compile Include="Models\Column.cs" />
         <Compile Include="Models\Coordinate.cs" />
+        <Compile Include="Models\ExtendedTurnResult.cs" />
         <Compile Include="Models\Field.cs" />
         <Compile Include="Models\CellState.cs" />
         <Compile Include="Models\Fields.cs" />
@@ -62,6 +63,7 @@
         <Compile Include="Models\Participant.cs" />
         <Compile Include="Models\Player.cs" />
         <Compile Include="Models\Row.cs" />
+        <Compile Include="Models\SerializableCell.cs" />
         <Compile Include="Models\SerializableGameResult.cs" />
         <Compile Include="Models\SerializableTurnResult.cs" />
         <Compile Include="Models\TurnResult.cs" />

@@ -1,6 +1,7 @@
 namespace SeaWars.Engine.Models
 {
     using System;
+    using System.Linq;
 
     [Serializable]
     public class SerializableTurnResult
@@ -10,20 +11,20 @@ namespace SeaWars.Engine.Models
             
         }
 
-        public SerializableTurnResult(TurnResult turnResult)
+        public SerializableTurnResult(ExtendedTurnResult turnResult)
         {
-            Row = turnResult.Coordinate.Row;
-            Column = turnResult.Coordinate.Column;
-            NewCellState = turnResult.NewCellState;
             PlayerId = turnResult.ParticipantId;
             Id = turnResult.Id;
+
+            ChangedCells = turnResult.ChangedCells.Select(kvp => new SerializableCell
+                                                                 {
+                                                                     Row = kvp.Key.Row,
+                                                                     Column = kvp.Key.Column,
+                                                                     State = kvp.Value
+                                                                 }).ToArray();
         }
         
-        public int Row { get; set; }
-        
-        public int Column { get; set; }
-        
-        public CellState NewCellState { get; set; }
+        public SerializableCell[] ChangedCells { get; set; }
         
         public int PlayerId { get; set; }
         

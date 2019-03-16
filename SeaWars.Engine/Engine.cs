@@ -26,7 +26,7 @@ namespace SeaWars.Engine
         
         private readonly Dictionary<int, int> _ids = new Dictionary<int, int>();
         
-        private readonly Queue<TurnResult> _turnsHistory = new Queue<TurnResult>();
+        private readonly Queue<ExtendedTurnResult> _turnsHistory = new Queue<ExtendedTurnResult>();
 
         private readonly DateTime _gameStartTime;
 
@@ -101,7 +101,15 @@ namespace SeaWars.Engine
 
                     turnResult.NewCellState = CellState.Empty;
                     _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
-                    _turnsHistory.Enqueue(turnResult);
+
+                    var extendedTurnRes = new ExtendedTurnResult
+                                          {
+                                              Id = turnCounter,
+                                              PlayerId = _currentTurnPlayer.Id,
+                                              ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                          };
+                    extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Empty);
+                    _turnsHistory.Enqueue(extendedTurnRes);
 
                     _currentTurnPlayer = GetPlayer(SwapId(currentTurnPlayerId));
                     _enemyPlayer = GetPlayer(currentTurnPlayerId);
@@ -116,10 +124,22 @@ namespace SeaWars.Engine
 
                     if (TurnKillsEnemyShip(_enemyPlayer, turn))
                     {
-                        PerformKill(_currentTurnPlayer, _enemyPlayer, turn);
+                        PerformKill(_currentTurnPlayer, _enemyPlayer, turn, out var killedShipCoordinates);
                         turnResult.NewCellState = CellState.Kill;
                         _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
-                        _turnsHistory.Enqueue(turnResult);
+                        
+                        var extendedTurnRes = new ExtendedTurnResult
+                                              {
+                                                  Id = turnCounter,
+                                                  PlayerId = _currentTurnPlayer.Id,
+                                                  ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                              };
+                        foreach (var coordinate in killedShipCoordinates)
+                        {
+                            extendedTurnRes.ChangedCells.Add(coordinate, CellState.Kill);
+                        }
+                        
+                        _turnsHistory.Enqueue(extendedTurnRes);
 
                         if (IsPlayerLost(_enemyPlayer.Id))
                         {
@@ -141,7 +161,15 @@ namespace SeaWars.Engine
                     {
                         turnResult.NewCellState = CellState.Hit;
                         _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
-                        _turnsHistory.Enqueue(turnResult);
+                        
+                        var extendedTurnRes = new ExtendedTurnResult
+                                              {
+                                                  Id = turnCounter,
+                                                  PlayerId = _currentTurnPlayer.Id,
+                                                  ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                              };
+                        extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Hit);
+                        _turnsHistory.Enqueue(extendedTurnRes);
                     }
                 }
                 else
@@ -149,7 +177,15 @@ namespace SeaWars.Engine
                     PerformMiss(_currentTurnPlayer, _enemyPlayer, turn);
                     turnResult.NewCellState = CellState.Miss;
                     _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
-                    _turnsHistory.Enqueue(turnResult);
+                    
+                    var extendedTurnRes = new ExtendedTurnResult
+                                          {
+                                              Id = turnCounter,
+                                              PlayerId = _currentTurnPlayer.Id,
+                                              ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                          };
+                    extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Miss);
+                    _turnsHistory.Enqueue(extendedTurnRes);
 
                     var currentTurnPlayerId = _currentTurnPlayer.Id;
 
@@ -170,7 +206,9 @@ namespace SeaWars.Engine
 
         private bool TurnHitsEnemy(Player enemy, Turn turn)
         {
-            return enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Unit;
+            return enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Unit ||
+                   enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Hit ||
+                   enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Kill;
         }
 
         private void PerformHit(Player player, Player enemy, Turn turn)
@@ -205,8 +243,9 @@ namespace SeaWars.Engine
             return false;
         }
 
-        private void PerformKill(Player player, Player enemy, Turn turn)
+        private void PerformKill(Player player, Player enemy, Turn turn, out IEnumerable<Coordinate> killedShipCoordinates)
         {
+            killedShipCoordinates = null;
             foreach (var ship in enemy.Field.ShipsPlaced)
             {
                 Ship attackedShip = null;
@@ -223,6 +262,8 @@ namespace SeaWars.Engine
 
                 if (attackedShip != null)
                 {
+                    killedShipCoordinates = attackedShip.Coordinates;
+                    
                     foreach (var attackedShipCoordinate in attackedShip.Coordinates)
                     {
                         enemy.Field.Cells[attackedShipCoordinate.Row, attackedShipCoordinate.Column].UpdateState(CellState.Kill);
