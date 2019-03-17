@@ -3,5 +3,5 @@ Debug/
 Release/
 .vs/
 *.DotSettings.user
-SeaWars.Server/bin/
+SeaBattle.Server/bin/
 packages/
