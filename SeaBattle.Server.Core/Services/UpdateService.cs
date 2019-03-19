@@ -24,9 +24,14 @@ namespace SeaBattle.Server.Core.Services
             {
                 return;
             }
-
+            
             var message = update.Message;
 
+            if (message.From.Id == _botService.Client.BotId)
+            {
+                return;
+            }
+            
             _logger.LogInformation("Received Message from {0}", message.Chat.Id);
 
             if (message.Type == MessageType.Text)

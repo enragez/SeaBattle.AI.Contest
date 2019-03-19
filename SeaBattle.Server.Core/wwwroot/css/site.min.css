@@ -1,1 +1,110 @@
-body,html{padding:0;margin:0;color:#595959;font-family:Roboto}.battle{overflow:hidden;width:1850px;position:center;display:inline-block}.history{width:300px;height:900px;float:left;overflow:auto;position:relative}.section{width:600px;height:600px;float:left;overflow:hidden;position:relative}.battlefield-cell{position:absolute;background-color:#eee;border:1px solid #fff}.battlefield-cell[data-value=Unit]{background-color:#2e9f76}.battlefield-cell[data-value=Hit]{background-color:#5b6461}.battlefield-cell[data-value=Kill]{background-color:#e15969}.fieldArea{width:100%;height:100%;padding:40px;position:absolute;overflow:hidden;box-sizing:border-box}.span-button{-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:pointer;display:block;border:1px solid #ccc;padding:6px;border-radius:4px;font-weight:500}.span-button:hover{background-color:#ccc;color:#fff;border:none}.whom-label{position:absolute;top:5px;display:block;width:100%;text-align:center;font-weight:900;font-size:25px}.tr-mesh{width:100%;height:100%;position:absolute;z-index:55;-webkit-transition:all linear .5s;transition:all linear .5s;background-color:rgba(0,0,0,.3)}.cell-selectable{cursor:pointer}.cell-selectable:hover{opacity:.6}
+body, html {
+    padding: 0;
+    margin: 0;
+    color: #595959;
+    font-family: Roboto;
+}
+
+.battle {
+    overflow: hidden;
+    width: 1850px;
+    position: center;
+    display: inline-block;
+}
+
+.history {
+    width: 300px;
+    height: 960px;
+    float: left;
+    overflow: auto;
+    position: relative;
+}
+
+.section {
+    width: 600px;
+    height: 600px;
+    float: left;
+    overflow: hidden;
+    position: relative;
+    margin-left: 50px;
+}
+
+.battlefield-cell {
+    position: absolute;
+    background-color: #eee;
+    border: 1px solid #fff;
+}
+
+/* Ship Deck */
+.battlefield-cell[data-value='Unit'] {
+    background-color: #2e9f76;
+}
+
+/* Shot */
+.battlefield-cell[data-value='Hit'] {
+    background-color: #5b6461;
+}
+
+/* Exploded */
+
+.battlefield-cell[data-value='Kill'] {
+    background-color: #e15969;
+}
+
+.fieldArea {
+    width: 100%;
+    height: 100%;
+    padding: 40px;
+    position: absolute;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.span-button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    display: block;
+    border: 1px solid #cccccc;
+    padding: 6px;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.span-button:hover {
+    background-color: #ccc;
+    color: white;
+    border: none;
+}
+
+.whom-label {
+    position: absolute;
+    top: 5px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-weight: 900;
+    font-size: 25px;
+}
+
+.tr-mesh {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 55;
+    -webkit-transition: all linear 0.5s;
+    transition: all linear 0.5s;
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.cell-selectable {
+    cursor: pointer;
+}
+
+.cell-selectable:hover {
+    opacity: 0.6;
+}

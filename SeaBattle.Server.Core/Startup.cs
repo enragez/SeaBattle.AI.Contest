@@ -43,6 +43,8 @@ namespace SeaBattle.Server.Core
         {
             app.UseMvc();
 
+            app.UseStaticFiles();
+
             app.UseMvc(routes =>
                        {
                            routes.MapRoute(
