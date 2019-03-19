@@ -8,7 +8,7 @@
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
-
+            
             routes.MapRoute("game",
                             "game/get/{id}",
                             new {controller = "Game", action = "Get"});
@@ -20,10 +20,17 @@
                                 controller = "Game",
                                 action = "GetTurn"
                             });
+
+            routes.MapRoute(
+                            "DesktopLogin",
+                            "api/{controller}",
+                            new { controller = "Update", action = "Post" }
+                           );
+            
             routes.MapRoute(
                             "Default",
                             "{controller}/{action}/{id}",
-                            new {controller = "Home", action = "Index", id = UrlParameter.Optional}
+                            new {controller = "Home", action = "Index", id = UrlParameter.Optional}, new string[] { "SeaBattle.Server.Controllers" }
                            );
         }
     }
