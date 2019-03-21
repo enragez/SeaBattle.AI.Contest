@@ -1,4 +1,5 @@
-﻿@model SeaBattle.Server.Models.Game
+﻿@using Microsoft.AspNetCore.Routing
+@model SeaBattle.Server.Models.Game
 
 <!DOCTYPE html>
 
@@ -7,15 +8,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@($"Game #{@Model.Id}")</title>
-    <link href="~/Content/Site.css" rel="stylesheet" />
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
 </head>
     <body>
     
     <div class="battle">
         <span class="whom-label">@($"Текущий ход: #{Model.Turn}")</span>
-        <div class="history" style="margin-top: 60px">
+        <div class="history">
             <span class="whom-label">История ходов</span>
             <ul style="margin-top: 50px;">
                 
@@ -74,8 +72,5 @@
     </div>
     <script>
     </script>
-    
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
     </body>
 </html>

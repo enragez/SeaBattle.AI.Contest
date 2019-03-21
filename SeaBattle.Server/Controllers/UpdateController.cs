@@ -1,36 +1,26 @@
 namespace SeaBattle.Server.Controllers
 {
-    using System;
-    using System.IO;
-    using System.Net;
     using System.Threading.Tasks;
-    using System.Web.Mvc;
-    using Newtonsoft.Json;
+    using Microsoft.AspNetCore.Mvc;
     using Services;
     using Telegram.Bot.Types;
-    
+
+    [Route("api/[controller]")]
     public class UpdateController : Controller
     {
-        public IUpdateService UpdateService { get; set; }
+        private readonly IUpdateService _updateService;
+
+        public UpdateController(IUpdateService updateService)
+        {
+            _updateService = updateService;
+        }
 
         // POST api/update
         [HttpPost]
-        public async Task<ActionResult> Post()
+        public async Task<IActionResult> Post([FromBody]Update update)
         {
-            var req = Request.InputStream;
-            req.Seek(0, System.IO.SeekOrigin.Begin);
-            var json = new StreamReader(req).ReadToEnd();
-
-            try
-            {
-                var update = JsonConvert.DeserializeObject<Update>(json);
-                await UpdateService.EchoAsync(update);
-                return new HttpStatusCodeResult(HttpStatusCode.OK);
-            }
-            catch (Exception ex)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            await _updateService.EchoAsync(update);
+            return Ok();
         }
     }
 }

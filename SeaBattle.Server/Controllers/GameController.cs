@@ -1,11 +1,11 @@
 namespace SeaBattle.Server.Controllers
 {
-    using System.Web.Mvc;
     using Engine.Models;
+    using Microsoft.AspNetCore.Mvc;
     using Models;
     using Newtonsoft.Json;
 
-    public class GameController : Controller
+    public class GameController: Controller
     {
         // GET
         public ActionResult Index()

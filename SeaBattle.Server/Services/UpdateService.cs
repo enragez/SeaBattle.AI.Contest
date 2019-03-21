@@ -1,9 +1,10 @@
 namespace SeaBattle.Server.Services
 {
-    using System.IO;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Serilog;
+    using Microsoft.Extensions.Logging;
+    using Models.Commands;
     using Telegram.Bot.Types;
     using Telegram.Bot.Types.Enums;
 
@@ -11,11 +12,19 @@ namespace SeaBattle.Server.Services
     {
         private readonly IBotService _botService;
         
-        public ILogger Logger { get; set; }
+        private readonly ILogger<UpdateService> _logger;
 
-        public UpdateService(IBotService botService)
+        private readonly Dictionary<string, ICommand> _commands;
+
+        private readonly IRegisterService _registerService;
+
+        public UpdateService(IBotService botService, ILogger<UpdateService> logger, IEnumerable<ICommand> commands, IRegisterService registerService)
         {
             _botService = botService;
+            _logger = logger;
+            _registerService = registerService;
+
+            _commands = commands.ToDictionary(cmd => $"/{cmd.Name}", cmd => cmd);
         }
 
         public async Task EchoAsync(Update update)
@@ -24,31 +33,40 @@ namespace SeaBattle.Server.Services
             {
                 return;
             }
-
+            
             var message = update.Message;
 
-            Logger.Information("Received Message from {0}", message.Chat.Id);
-
-            if (message.Type == MessageType.Text)
+            if (message.Chat.Type != ChatType.Private)
             {
-                // Echo each Message
-                await _botService.Client.SendTextMessageAsync(message.Chat.Id, message.Text);
+                return;
             }
-            else if (message.Type == MessageType.Photo)
+            
+            if (_registerService.UserRegistering(update.Message.From.Id))
             {
-                // Download Photo
-                var fileId = message.Photo.LastOrDefault()?.FileId;
-                var file = await _botService.Client.GetFileAsync(fileId);
-
-                var filename = file.FileId + "." + file.FilePath.Split('.').Last();
-
-                using (var saveImageStream = System.IO.File.Open(filename, FileMode.Create))
+                await _registerService.MoveMext(update);
+                return;
+            }
+            
+            if (IsCommandMessage(update))
+            {
+                if (_commands.TryGetValue(update.Message.Text, out var matchCommand))
                 {
-                    await _botService.Client.DownloadFileAsync(file.FilePath, saveImageStream);
+                    await matchCommand.Execute(update);
                 }
-
-                await _botService.Client.SendTextMessageAsync(message.Chat.Id, "Thx for the Pics");
+                else
+                {
+                    // todo unknown command
+                }
             }
+            else
+            {
+                // todo simple message
+            }
+        }
+
+        private bool IsCommandMessage(Update update)
+        {
+            return update.Message?.Entities?.Any(entity => entity?.Type == MessageEntityType.BotCommand) ?? false;
         }
     }
 }
