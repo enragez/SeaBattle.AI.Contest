@@ -12132,11 +12132,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\ChildProjects\\SeaWarsEngine\\SeaBattle.Server.Core\\SeaBattle.Server.Core.csproj",
-      "projectName": "SeaBattle.Server.Core",
-      "projectPath": "D:\\ChildProjects\\SeaWarsEngine\\SeaBattle.Server.Core\\SeaBattle.Server.Core.csproj",
+      "projectUniqueName": "D:\\ChildProjects\\SeaWarsEngine\\SeaBattle.Server\\SeaBattle.Server.csproj",
+      "projectName": "SeaBattle.Server",
+      "projectPath": "D:\\ChildProjects\\SeaWarsEngine\\SeaBattle.Server\\SeaBattle.Server.csproj",
       "packagesPath": "C:\\Users\\a.ivoylov\\.nuget\\packages\\",
-      "outputPath": "D:\\ChildProjects\\SeaWarsEngine\\SeaBattle.Server.Core\\obj\\",
+      "outputPath": "D:\\ChildProjects\\SeaWarsEngine\\SeaBattle.Server\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"

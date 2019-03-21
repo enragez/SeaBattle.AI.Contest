@@ -4,4 +4,5 @@ Release/
 .vs/
 *.DotSettings.user
 SeaBattle.Server/bin/
+SeaBattle.Server/obj/
 packages/
