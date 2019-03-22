@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.StateMachine
+namespace SeaBattle.Server.StateMachine.Registration
 {
     public enum RegistrationState
     {
@@ -7,6 +7,8 @@ namespace SeaBattle.Server.StateMachine
         WaitingForName,
         
         WaitingForStrategy,
+        
+        ReadyToFinish,
         
         Registered,
         

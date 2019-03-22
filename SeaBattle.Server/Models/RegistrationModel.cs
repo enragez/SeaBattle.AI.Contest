@@ -1,13 +1,13 @@
 namespace SeaBattle.Server.Models
 {
-    using Telegram.Bot.Types;
+    using System.IO;
 
     public class RegistrationModel
     {
-        public long TelegramId { get; set; }
+        public int TelegramId { get; set; }
         
         public string Name { get; set; }
         
-        public File StrategyFile { get; set; }
+        public MemoryStream StrategyStream { get; set; }
     }
 }

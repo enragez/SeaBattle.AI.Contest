@@ -61,12 +61,34 @@ namespace SeaBattle.Engine
 
             if (!FieldValidator.IsFieldValid(_player1.Field))
             {
-                // 1 proebal
+                return new GameResult
+                       {
+                           Id = _gameId,
+                           StartTime = _gameStartTime,
+                           EndTime = DateTime.Now,
+                           Participant1 = _participants[0],
+                           Participant2 = _participants[1],
+                           Winner = _participants[1],
+                           TurnsHistory = _turnsHistory,
+                           Participant1StartField = _startPlayer1Field,
+                           Participant2StartField = _startPlayer2Field
+                       };
             }
 
             if (!FieldValidator.IsFieldValid(_player2.Field))
             {
-                // 2 proebal
+                return new GameResult
+                       {
+                           Id = _gameId,
+                           StartTime = _gameStartTime,
+                           EndTime = DateTime.Now,
+                           Participant1 = _participants[0],
+                           Participant2 = _participants[1],
+                           Winner = _participants[0],
+                           TurnsHistory = _turnsHistory,
+                           Participant1StartField = _startPlayer1Field,
+                           Participant2StartField = _startPlayer2Field
+                       };
             }
 
             _startPlayer1Field = new Field(_player1.Field.ShipsPlaced);

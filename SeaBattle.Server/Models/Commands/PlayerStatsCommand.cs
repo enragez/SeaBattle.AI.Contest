@@ -1,27 +1,29 @@
 namespace SeaBattle.Server.Models.Commands
 {
+    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Services;
+    using Services.Stats;
     using Telegram.Bot.Types;
 
-    public class DuelCommand : ICommand
+    public class PlayerStatsCommand : ICommand
     {
         private readonly IBotService _botService;
         
+        private readonly IStatisticsService _statsService;
+
         private readonly ApplicationContext _dbContext;
-        
-        private readonly IGameRunner _runner;
 
-        public string Name => "duel";
+        public string Name => "playerstats";
 
-        public DuelCommand(IBotService botService, ApplicationContext dbContext, IGameRunner runner)
+        public PlayerStatsCommand(IBotService botService, IStatisticsService statsService, ApplicationContext dbContext)
         {
             _botService = botService;
+            _statsService = statsService;
             _dbContext = dbContext;
-            _runner = runner;
         }
-        
+
         public async Task Execute(Update update)
         {
             var playerId = Utils.GetCommandArgument(update);
@@ -43,30 +45,11 @@ namespace SeaBattle.Server.Models.Commands
                 return;
             }
 
-            var player2 = await _dbContext.Participants.FirstOrDefaultAsync(p => p.Id == id);
+            var player = await _dbContext.Participants.FirstOrDefaultAsync(p => p.Id == id);
 
-            if (player2 == null)
-            {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
-                                                              $@"Игрок с идентификатором {id} не найден.
+            var stats = _statsService.Get(player);
 
-Для получения идентификаторов необходимо использовать команду /players");
-                return;
-            }
-            
-            var player1 = await _dbContext.Participants.FirstOrDefaultAsync(p => p.TelegramId == update.Message.From.Id);
-
-            var gameResult = await _runner.StartGameAsync(player1, player2, false);
-
-            var winnerName = gameResult.Winner.Id == player1.Id
-                                 ? player1.Name
-                                 : player2.Name;
-
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
-                                                          $@"Игра завершена.
-Победитель: {winnerName}
-
-Подробности: ТУТ_ДОЛЖЕН_БЫТЬ_URL");
+            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, stats);
         }
     }
 }

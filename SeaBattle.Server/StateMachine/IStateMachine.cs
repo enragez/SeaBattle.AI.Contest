@@ -1,15 +1,14 @@
 namespace SeaBattle.Server.StateMachine
 {
     using System.Threading.Tasks;
-    using Models;
     using Telegram.Bot.Types;
 
-    public interface IRegistrationStateMachine
+    public interface IStateMachine<out TState>
     {
-        RegistrationState State { get; }
+        TState State { get; }
 
         Task MoveNext(Update update);
 
-        RegistrationModel Register();
+        Task Finish(Update update);
     }
 }

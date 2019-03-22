@@ -3,8 +3,8 @@ namespace SeaBattle.Server.Services
     using System.Threading.Tasks;
     using Telegram.Bot.Types;
 
-    public interface IUpdateService
+    public interface IUpdateHandler
     {
-        Task EchoAsync(Update update);
+        Task Handle(Update update);
     }
 }

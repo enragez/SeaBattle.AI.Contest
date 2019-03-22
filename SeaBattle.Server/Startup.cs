@@ -4,12 +4,18 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Models;
     using Models.Commands;
     using Services;
+    using Services.Stats;
+    using Services.UpdateNameService;
     using StateMachine;
+    using StateMachine.Registration;
+    using StateMachine.UpdateName;
+    using StateMachine.UpdateStrategy;
 
     public class Startup
     {
@@ -32,12 +38,37 @@
 
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(Configuration.GetConnectionString("ApplicationContext")));
             
-            services.AddScoped<IUpdateService, UpdateService>();
+            services.AddSingleton<ICommand, RegisterCommand>();
+            services.AddSingleton<ICommand, UpdateNameCommand>();
+            services.AddSingleton<ICommand, UpdateStrategyCommand>();
+            services.AddSingleton<ICommand, MyStatsCommand>();
+            services.AddSingleton<ICommand, PlayersCommand>();
+            services.AddSingleton<ICommand, PlayerStatsCommand>();
+            services.AddSingleton<ICommand, DuelCommand>();
+            
+            services.AddSingleton<IUpdateHandler, UpdateHandler>();
             services.AddSingleton<IBotService, BotService>();
-            services.AddTransient<ICommand, RegisterCommand>();
-            services.AddSingleton<IRegisterService, RegisterService>();
-            services.AddTransient<IRegistrationStateMachine, RegistrationStateMachine>();
+            services.AddSingleton<IStatisticsService, StatisticsService>();
+            services.AddSingleton<IGameRunner, GameRunner>();
+            
+            services.AddSingleton<RegisterService>();
+            services.AddSingleton<UpdateStrategyService>();
+            services.AddSingleton<UpdateNameService>();
+            
+            services.AddSingleton<IServiceWithState>(x => x.GetRequiredService<RegisterService>());
+            services.AddSingleton<IServiceWithState>(x => x.GetRequiredService<UpdateStrategyService>());
+            services.AddSingleton<IServiceWithState>(x => x.GetRequiredService<UpdateNameService>());
+            
+            services.AddSingleton<IServiceWithState<RegistrationState>>(x => x.GetRequiredService<RegisterService>());
+            services.AddSingleton<IServiceWithState<UpdateStrategyState>>(x => x.GetRequiredService<UpdateStrategyService>());
+            services.AddSingleton<IServiceWithState<UpdateNameState>>(x => x.GetRequiredService<UpdateNameService>());
+            
+            services.AddTransient<IStateMachine<RegistrationState>, RegistrationStateMachine>();
+            services.AddTransient<IStateMachine<UpdateStrategyState>, UpdateStrategyStateMachine>();
+            services.AddTransient<IStateMachine<UpdateNameState>, UpdateNameStateMachine>();
 
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
         }
