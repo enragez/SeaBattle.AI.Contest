@@ -2,7 +2,6 @@ namespace SeaBattle.Server.Services
 {
     using System.Threading.Tasks;
     using Microsoft.Extensions.Options;
-    using MihaZupan;
     using Models;
     using Telegram.Bot;
 
@@ -14,12 +13,7 @@ namespace SeaBattle.Server.Services
         {
             _config = config.Value;
             // use proxy if configured in appsettings.*.json
-            Client = string.IsNullOrEmpty(_config.Socks5Host)
-                         ? new TelegramBotClient(_config.BotToken)
-                         : new TelegramBotClient(_config.BotToken,
-                                                 new HttpToSocks5Proxy(_config.Socks5Host, _config.Socks5Port));
-
-           
+            Client = new TelegramBotClient(_config.BotToken);
         }
 
         public TelegramBotClient Client { get; }
