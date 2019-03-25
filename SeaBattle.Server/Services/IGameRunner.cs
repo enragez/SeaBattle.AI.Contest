@@ -1,11 +1,12 @@
 namespace SeaBattle.Server.Services
 {
+    using System.Threading.Tasks;
     using Engine.Models;
     using Entities;
     using Participant = Entities.Participant;
 
     public interface IGameRunner
     {
-        (PlayedGame, GameResult) StartGame(Participant player1, Participant player2, bool ratedGame);
+        Task<(PlayedGame, GameResult)> StartGameAsync(Participant player1, Participant player2, bool ratedGame);
     }
 }

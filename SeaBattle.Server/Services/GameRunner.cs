@@ -1,18 +1,18 @@
 namespace SeaBattle.Server.Services
 {
+    using System;
     using System.Threading.Tasks;
     using Engine;
     using Engine.Models;
     using Engine.Models.Serializable;
     using Entities;
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using Newtonsoft.Json;
     using Participant = Entities.Participant;
 
     public class GameRunner : IGameRunner
     {
-        private static object _locker = new object();
-        
         private readonly ApplicationContext _dbContext;
 
         public GameRunner(ApplicationContext dbContext)
@@ -20,15 +20,15 @@ namespace SeaBattle.Server.Services
             _dbContext = dbContext;
         }
 
-        public (PlayedGame, GameResult) StartGame(Participant player1, Participant player2, bool ratedGame)
+        public async Task<(PlayedGame, GameResult)> StartGameAsync(Participant player1, Participant player2, bool ratedGame)
         {
-            var participant1 = new SeaBattle.Engine.Models.PlayerDto
+            var participant1 = new PlayerDto
                                {
                                    Id = player1.Id,
                                    StrategyAssembly = player1.Strategy
                                };
 
-            var participant2 = new SeaBattle.Engine.Models.PlayerDto
+            var participant2 = new PlayerDto
                                {
                                    Id = player2.Id,
                                    StrategyAssembly = player2.Strategy
@@ -38,15 +38,31 @@ namespace SeaBattle.Server.Services
             
             var gameResult = engine.StartGame();
 
+            var serializableResult = new SerializableGameResult(gameResult);
+
+            // hack: engine cannot remove from serialization
+            serializableResult.Participant1.PlayerDto.StrategyAssembly = null;
+            serializableResult.Participant2.PlayerDto.StrategyAssembly = null;
+            
             var newGame = new PlayedGame
                           {
                               Result = JsonConvert.SerializeObject(new SerializableGameResult(gameResult))
                           };
+            _dbContext.PlayedGames.Add(newGame);
 
-            lock (_locker)
+            var saved = false;
+
+            while (!saved)
             {
-                _dbContext.PlayedGames.Add(newGame);
-                _dbContext.SaveChanges();
+                try
+                {
+                    await _dbContext.SaveChangesAsync();
+                    
+                    saved = true;
+                }
+                catch (DbUpdateConcurrencyException e)
+                {
+                }
             }
 
             return (newGame, gameResult);

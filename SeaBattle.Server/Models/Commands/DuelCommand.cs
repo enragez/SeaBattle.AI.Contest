@@ -75,7 +75,7 @@ namespace SeaBattle.Server.Models.Commands
                                                               $"Игрок {player1.Name} вызвал вас на дуэль");
             }
 
-            var (playedGame, gameResult) = _runner.StartGame(player1, player2, false);
+            var (playedGame, gameResult) = await _runner.StartGameAsync(player1, player2, false);
 
             var winnerName = gameResult.Winner.Id == player1.Id
                                  ? player1.Name
