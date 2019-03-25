@@ -51,6 +51,18 @@ namespace SeaBattle.Server.StateMachine.UpdateName
 
         private async Task HandleStartedState(Update update)
         {
+            var participant = await _dbContext.Participants.FirstAsync(p => p.TelegramId == update.Message.From.Id);
+            
+            if (participant == null)
+            {
+                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                              @"Вы не зарегистрированы.
+
+Для участия необходимо использовать команду /register");
+                State = UpdateNameState.Canceled;
+                return;
+            }
+            
             await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, "Пожалуйста, укажите новое имя");
             State = UpdateNameState.WaitingForName;
         }

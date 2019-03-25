@@ -11,9 +11,9 @@ namespace SeaBattle.Engine
     {
         private readonly PlayerStrategy _strategy;
         
-        internal StrategyWrapper(string dllPath)
+        internal StrategyWrapper(byte[] assemblyBytes)
         {
-            var assembly = Assembly.LoadFrom(dllPath);
+            var assembly = Assembly.Load(assemblyBytes);
 
             var module = assembly.Modules.FirstOrDefault();
 

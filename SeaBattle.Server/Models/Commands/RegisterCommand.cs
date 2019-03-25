@@ -34,6 +34,7 @@ namespace SeaBattle.Server.Models.Commands
             {
                 await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Вы уже зарегистрированы.
+
 Используйте команды:
 /updatename - если хотите изменить имя
 /updatestrategy - если хотите обновить стратегию");

@@ -1,6 +1,5 @@
 namespace SeaBattle.Server.Services
 {
-    using System.IO;
     using System.Threading.Tasks;
     using Engine;
     using Engine.Models;
@@ -11,6 +10,8 @@ namespace SeaBattle.Server.Services
 
     public class GameRunner : IGameRunner
     {
+        private static object _locker = new object();
+        
         private readonly ApplicationContext _dbContext;
 
         public GameRunner(ApplicationContext dbContext)
@@ -18,59 +19,36 @@ namespace SeaBattle.Server.Services
             _dbContext = dbContext;
         }
 
-        public async Task<GameResult> StartGameAsync(Participant player1, Participant player2, bool ratedGame)
+        public (PlayedGame, GameResult) StartGame(Participant player1, Participant player2, bool ratedGame)
         {
-            var player1StrategyFilePath = Path.Combine(Path.GetTempPath(), $"{player1.Id}.dll");
-            if (File.Exists(player1StrategyFilePath))
+            var participant1 = new SeaBattle.Engine.Models.Participant
+                               {
+                                   Id = player1.Id,
+                                   StrategyAssembly = player1.Strategy
+                               };
+
+            var participant2 = new SeaBattle.Engine.Models.Participant
+                               {
+                                   Id = player2.Id,
+                                   StrategyAssembly = player2.Strategy
+                               };
+
+            var engine = new Engine(participant1, participant2);
+            
+            var gameResult = engine.StartGame();
+
+            var newGame = new PlayedGame
+                          {
+                              Result = JsonConvert.SerializeObject(new SerializableGameResult(gameResult))
+                          };
+
+            lock (_locker)
             {
-                File.Delete(player1StrategyFilePath);
+                _dbContext.PlayedGames.Add(newGame);
+                _dbContext.SaveChanges();
             }
 
-            File.WriteAllBytes(player1StrategyFilePath, player1.Strategy);
-
-            var player2StrategyFilePath = Path.Combine(Path.GetTempPath(), $"{player2.Id}.dll");
-            if (File.Exists(player1StrategyFilePath))
-            {
-                File.Delete(player1StrategyFilePath);
-            }
-
-            File.WriteAllBytes(player2StrategyFilePath, player2.Strategy);
-
-            var newGame = new PlayedGame();
-            _dbContext.PlayedGames.Add(newGame);
-
-            await _dbContext.SaveChangesAsync();
-
-            var gameResult = await RunGame(newGame.Id, player1, player2, player1StrategyFilePath, player2StrategyFilePath);
-
-            newGame.Result = JsonConvert.SerializeObject(gameResult);
-
-            await _dbContext.SaveChangesAsync();
-
-            return gameResult;
-        }
-
-        private Task<GameResult> RunGame(int gameId, Participant player1, Participant player2,
-                                         string player1StrategyFilePath, string player2StrategyFilePath)
-        {
-            return new Task<GameResult>(() =>
-                                        {
-                                            var participant1 = new SeaBattle.Engine.Models.Participant
-                                                               {
-                                                                   Id = player1.Id,
-                                                                   StrategyAssemblyPath = player1StrategyFilePath
-                                                               };
-
-                                            var participant2 = new SeaBattle.Engine.Models.Participant
-                                                               {
-                                                                   Id = player2.Id,
-                                                                   StrategyAssemblyPath = player2StrategyFilePath
-                                                               };
-
-                                            var engine = new Engine(gameId, participant1, participant2);
-
-                                            return engine.StartGame();
-                                        });
+            return (newGame, gameResult);
         }
     }
 }

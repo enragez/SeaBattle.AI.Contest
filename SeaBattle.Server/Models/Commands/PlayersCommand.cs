@@ -25,8 +25,8 @@ namespace SeaBattle.Server.Models.Commands
         {
             var playersInfo = await _dbContext.Participants.Select(p => new
                                                                         {
-                                                                            Id = p.Id,
-                                                                            Name = p.Name
+                                                                            p.Id,
+                                                                            p.Name
                                                                         })
                                            .ToListAsync();
 
@@ -34,7 +34,7 @@ namespace SeaBattle.Server.Models.Commands
             message.AppendLine();
             message.AppendLine();
 
-            foreach (var pInfo in playersInfo)
+            foreach (var pInfo in playersInfo.OrderBy(p => p.Id))
             {
                 message.AppendLine($"Имя: {pInfo.Name}, Id: {pInfo.Id}");
             }

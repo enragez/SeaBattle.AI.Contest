@@ -1,80 +1,107 @@
 namespace SeaBattle.Server.Controllers
 {
+    using System.Threading.Tasks;
     using Engine.Models;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.EntityFrameworkCore;
     using Models;
     using Newtonsoft.Json;
 
     public class GameController: Controller
     {
+        private readonly ApplicationContext _dbContext;
+
+        public GameController(ApplicationContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+        
         // GET
         public ActionResult Index()
         {
             return Redirect("Home");
         }
-
-        private const string MockGameFilePath = @"C:\Users\a.ivoylov\AppData\Local\Temp\tmpBCAB.json";
         
         [HttpGet]
-        public ActionResult Get(int id)
+        public async Task<ActionResult> Get(int id)
         {
-            var gameResultStr = System.IO.File.ReadAllText(MockGameFilePath);
-
-            var gameResult = JsonConvert.DeserializeObject<SerializableGameResult>(gameResultStr);
+            var game = await _dbContext.PlayedGames.FirstOrDefaultAsync(g => g.Id == id);
+            if (game == null)
+            {
+                return NotFound();
+            }
+            
+            var gameResult = JsonConvert.DeserializeObject<SerializableGameResult>(game.Result);
+            
+            var participant1 =
+                await _dbContext.Participants.FirstOrDefaultAsync(p => p.Id == gameResult.Participant1Id);
+            
+            var participant2 =
+                await _dbContext.Participants.FirstOrDefaultAsync(p => p.Id == gameResult.Participant2Id);
 
             var gameModel = new Game
                             {
-                                Id = gameResult.Id,
+                                Id = game.Id,
                                 Turn = 0,
                                 StartTime = gameResult.StartTime,
                                 EndTime = gameResult.EndTime,
                                 Participant1 = new Models.Participant
                                                {
-                                                   Id = gameResult.Participant1Id,
-                                                   Name = "Вася"
+                                                   Id = participant1.Id,
+                                                   Name = participant1.Name
                                                },
                                 Participant2 = new Models.Participant
                                                {
-                                                   Id = gameResult.Participant2Id,
-                                                   Name = "Петя"
+                                                   Id = participant2.Id,
+                                                   Name = participant2.Name
                                                },
                                 TurnsHistory = gameResult.TurnsHistory,
                                 Participant1Field = gameResult.Participant1StartField,
                                 Participant2Field = gameResult.Participant2StartField
                             };
 
-            ViewBag.Title = $"Игра #{gameResult.Id}";
+            ViewBag.Title = $"Игра #{game.Id}";
             
             return View("Game", gameModel);
         }
 
-        public ActionResult GetTurn(int id, int turn)
+        public async Task<ActionResult> GetTurn(int id, int turn)
         {
-            var gameResultStr = System.IO.File.ReadAllText(MockGameFilePath);
+            var game = await _dbContext.PlayedGames.FirstOrDefaultAsync(g => g.Id == id);
+            if (game == null)
+            {
+                return NotFound();
+            }
+            
+            var gameResult = JsonConvert.DeserializeObject<SerializableGameResult>(game.Result);
 
-            var gameResult = JsonConvert.DeserializeObject<SerializableGameResult>(gameResultStr);
+            var participant1 =
+                await _dbContext.Participants.FirstOrDefaultAsync(p => p.Id == gameResult.Participant1Id);
+            
+            var participant2 =
+                await _dbContext.Participants.FirstOrDefaultAsync(p => p.Id == gameResult.Participant2Id);
             
             var gameModel = new Game
                             {
-                                Id = gameResult.Id,
+                                Id = game.Id,
                                 Turn = turn,
                                 StartTime = gameResult.StartTime,
                                 EndTime = gameResult.EndTime,
                                 Participant1 = new Models.Participant
                                                {
-                                                   Id = gameResult.Participant1Id,
-                                                   Name = "Вася"
+                                                   Id = participant1.Id,
+                                                   Name = participant1.Name
                                                },
                                 Participant2 = new Models.Participant
                                                {
-                                                   Id = gameResult.Participant2Id,
-                                                   Name = "Петя"
+                                                   Id = participant2.Id,
+                                                   Name = participant2.Name
                                                },
                                 TurnsHistory = gameResult.TurnsHistory,
                                 Participant1Field = GetFieldByTurnsHistory(gameResult.Participant1StartField, gameResult.TurnsHistory, turn, gameResult.Participant1Id),
                                 Participant2Field = GetFieldByTurnsHistory(gameResult.Participant2StartField, gameResult.TurnsHistory,  turn, gameResult.Participant2Id)
                             };
-            ViewBag.Title = $"Игра #{gameResult.Id}";
+            ViewBag.Title = $"Игра #{game.Id}";
             
             return View("Game", gameModel);
         }

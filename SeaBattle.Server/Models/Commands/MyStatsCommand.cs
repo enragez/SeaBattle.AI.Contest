@@ -25,8 +25,16 @@ namespace SeaBattle.Server.Models.Commands
         public async Task Execute(Update update)
         {
             var player =
-                await _dbContext.Participants.FirstOrDefaultAsync(p => p.TelegramId == update.Message.From.Id)
-                             ;
+                await _dbContext.Participants.FirstOrDefaultAsync(p => p.TelegramId == update.Message.From.Id);
+
+            if (player == null)
+            {
+                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                              @"Вы не зарегистрированы.
+
+Для участия необходимо использовать команду /register");
+                return;
+            }
             
             var stats = _statsService.Get(player);
 

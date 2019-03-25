@@ -13,7 +13,6 @@ namespace SeaBattle.Engine.Models
 
         public SerializableGameResult(GameResult result)
         {
-            Id = result.Id;
             StartTime = result.StartTime;
             EndTime = result.EndTime;
             WinnerId = result.Winner.Id;
@@ -23,8 +22,6 @@ namespace SeaBattle.Engine.Models
             Participant1StartField = ConvertField(result.Participant1StartField);
             Participant2StartField = ConvertField(result.Participant2StartField);
         }
-        
-        public int Id { get; set; }
         
         public DateTime StartTime { get; set; }
         

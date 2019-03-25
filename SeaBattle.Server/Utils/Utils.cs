@@ -8,6 +8,8 @@ namespace SeaBattle.Server
     {
         internal const string BotUserName = "SeaBattleAIContestBot";
 
+        internal static string CurrentApplicationUrl;
+
         internal static bool IsCommand(Update update)
         {
             return update.Message?.Entities?.Any(ent => ent?.Type == MessageEntityType.BotCommand) ?? false;

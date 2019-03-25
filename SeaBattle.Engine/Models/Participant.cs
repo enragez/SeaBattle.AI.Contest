@@ -6,6 +6,8 @@ namespace SeaBattle.Engine.Models
         
         public string StrategyAssemblyPath { get; set; }
         
+        public byte[] StrategyAssembly { get; set; }
+        
         public PlayerStrategy Strategy { get; set; }
     }
 }

@@ -5,20 +5,23 @@ namespace SeaBattle.Server.StateMachine.Registration
     using System.Threading.Tasks;
     using Models;
     using Services;
+    using Services.Compile;
     using Telegram.Bot.Types;
 
     public class RegistrationStateMachine : IStateMachine<RegistrationState>
     {
         private readonly IBotService _botService;
+        private readonly IStrategyCompiler _compiler;
         private readonly ApplicationContext _dbContext;
 
         public RegistrationState State { get; private set; } = RegistrationState.Started;
 
         private RegistrationModel _registration;
 
-        public RegistrationStateMachine(IBotService botService, ApplicationContext dbContext)
+        public RegistrationStateMachine(IBotService botService, IStrategyCompiler compiler, ApplicationContext dbContext)
         {
             _botService = botService;
+            _compiler = compiler;
             _dbContext = dbContext;
         }
 
@@ -92,10 +95,22 @@ namespace SeaBattle.Server.StateMachine.Registration
             var memoryStream = new MemoryStream();
 
             await _botService.Client.DownloadFileAsync(file.FilePath, memoryStream);
-            
-            // TODO: check zip contains cs-files, try to compile, if success - ReadyToFinish, zip dll, else - compilation error message
-            
-            _registration.StrategyStream = memoryStream;
+
+            using (memoryStream)
+            {
+                try
+                {
+                    _registration.StrategyAssembly = await _compiler.Compile(memoryStream);
+                }
+                catch (StrategyCompilationException ex)
+                {
+                    await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                                  $@"Ошибка компиляции стратегии: 
+
+{ex.Message}");
+                    return;
+                }
+            }
             
             State = RegistrationState.ReadyToFinish;
         }
@@ -107,17 +122,14 @@ namespace SeaBattle.Server.StateMachine.Registration
                 return;
             }
 
-            using (_registration.StrategyStream)
-            {
-                _dbContext.Participants.Add(new Entities.Participant
-                                            {
-                                                Name = _registration.Name,
-                                                TelegramId = _registration.TelegramId,
-                                                Strategy = _registration.StrategyStream.ToArray()
-                                            });
+            _dbContext.Participants.Add(new Entities.Participant
+                                        {
+                                            Name = _registration.Name,
+                                            TelegramId = _registration.TelegramId,
+                                            Strategy = _registration.StrategyAssembly
+                                        });
 
-                await _dbContext.SaveChangesAsync();
-            }
+            await _dbContext.SaveChangesAsync();
             
             await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
                                                           "Регистрация завершена");

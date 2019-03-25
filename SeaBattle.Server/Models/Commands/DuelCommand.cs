@@ -1,6 +1,10 @@
 namespace SeaBattle.Server.Models.Commands
 {
+    using System;
     using System.Threading.Tasks;
+    using Engine.Models;
+    using Entities;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Services;
     using Telegram.Bot.Types;
@@ -24,6 +28,17 @@ namespace SeaBattle.Server.Models.Commands
         
         public async Task Execute(Update update)
         {
+            var player1 = await _dbContext.Participants.FirstOrDefaultAsync(p => p.TelegramId == update.Message.From.Id);
+            
+            if (player1 == null)
+            {
+                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                              @"Вы не зарегистрированы.
+
+Для участия необходимо использовать команду /register");
+                return;
+            }
+            
             var playerId = Utils.GetCommandArgument(update);
             if (string.IsNullOrWhiteSpace(playerId))
             {
@@ -53,10 +68,17 @@ namespace SeaBattle.Server.Models.Commands
 Для получения идентификаторов необходимо использовать команду /players");
                 return;
             }
-            
-            var player1 = await _dbContext.Participants.FirstOrDefaultAsync(p => p.TelegramId == update.Message.From.Id);
 
-            var gameResult = await _runner.StartGameAsync(player1, player2, false);
+            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                          $"Дуэль между игроками {player1.Name} и {player2.Name} запущена");
+
+            if (player1.Id != player2.Id)
+            {
+                await _botService.Client.SendTextMessageAsync((long) player2.TelegramId,
+                                                              $"Игрок {player1.Name} вызвал вас на дуэль");
+            }
+
+            var (playedGame, gameResult) = _runner.StartGame(player1, player2, false);
 
             var winnerName = gameResult.Winner.Id == player1.Id
                                  ? player1.Name
@@ -66,7 +88,21 @@ namespace SeaBattle.Server.Models.Commands
                                                           $@"Игра завершена.
 Победитель: {winnerName}
 
-Подробности: ТУТ_ДОЛЖЕН_БЫТЬ_URL");
+Подробности: {GetGameUrl(playedGame)}");
+
+            if (player1.Id != player2.Id)
+            {
+                await _botService.Client.SendTextMessageAsync((long) player2.TelegramId,
+                                                              $@"Игра завершена.
+Победитель: {winnerName}
+
+Подробности: {GetGameUrl(playedGame)}");
+            }
+        }
+
+        private string GetGameUrl(PlayedGame game)
+        {
+            return $"{Utils.CurrentApplicationUrl}game/get/{game.Id}";
         }
     }
 }

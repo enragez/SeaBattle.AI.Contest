@@ -24,34 +24,26 @@ namespace SeaBattle.Engine
         
         private readonly Participant[] _participants = new Participant[2];
         
-        private readonly Dictionary<int, int> _ids = new Dictionary<int, int>();
-        
         private readonly Queue<ExtendedTurnResult> _turnsHistory = new Queue<ExtendedTurnResult>();
 
         private readonly DateTime _gameStartTime;
-
-        private readonly int _gameId;
         
-        public Engine(int gameId, Participant participant1, Participant participant2)
+        public Engine(Participant participant1, Participant participant2)
         {
-            _gameId = gameId;
-            
             _fields.Add(0, new Fields());
             _fields.Add(1, new Fields());
 
             _participants[0] = participant1;
-            _ids.Add(participant1.Id, 0);
             
             _participants[1] = participant2;
-            _ids.Add(participant2.Id, 1);
 
             _gameStartTime = DateTime.Now;
         }
 
         public GameResult StartGame()
         {
-            _player1 = CreatePlayer(_participants[0]);
-            _player2 = CreatePlayer(_participants[1]);
+            _player1 = CreatePlayer(_participants[0], 0);
+            _player2 = CreatePlayer(_participants[1], 1);
             
             _player1.GamePhaseChanged(GamePhase.Planning);
             _player2.GamePhaseChanged(GamePhase.Planning);
@@ -63,7 +55,6 @@ namespace SeaBattle.Engine
             {
                 return new GameResult
                        {
-                           Id = _gameId,
                            StartTime = _gameStartTime,
                            EndTime = DateTime.Now,
                            Participant1 = _participants[0],
@@ -79,7 +70,6 @@ namespace SeaBattle.Engine
             {
                 return new GameResult
                        {
-                           Id = _gameId,
                            StartTime = _gameStartTime,
                            EndTime = DateTime.Now,
                            Participant1 = _participants[0],
@@ -167,7 +157,6 @@ namespace SeaBattle.Engine
                         {
                             return new GameResult
                                    {
-                                       Id = _gameId,
                                        StartTime = _gameStartTime,
                                        EndTime = DateTime.Now,
                                        Participant1 = _participants[0],
@@ -318,17 +307,14 @@ namespace SeaBattle.Engine
                        : 0;
         }
 
-        private Player CreatePlayer(Participant participant)
+        private Player CreatePlayer(Participant participant, int participantIndex)
         {
-            var participantIndex = _ids[participant.Id];
-            
-            var dllPath = participant.StrategyAssemblyPath;
             var playerField = _fields[participantIndex].Field;
 
             var enemyField = _fields[SwapId(participantIndex)].FieldForEnemy;
 
-            var strategyWrapper = !string.IsNullOrEmpty(dllPath)
-                                      ? CreateStrategyWrapper(dllPath)
+            var strategyWrapper = participant.StrategyAssembly != null 
+                                      ? CreateStrategyWrapper(participant.StrategyAssembly)
                                       : CreateStrategyWrapper(participant.Strategy);
             
             strategyWrapper.Setup(playerField, enemyField, participantIndex);
@@ -343,9 +329,9 @@ namespace SeaBattle.Engine
                    };
         }
 
-        private StrategyWrapper CreateStrategyWrapper(string dllPath)
+        private StrategyWrapper CreateStrategyWrapper(byte[] assembly)
         {
-            return new StrategyWrapper(dllPath);
+            return new StrategyWrapper(assembly);
         }
 
         private StrategyWrapper CreateStrategyWrapper(PlayerStrategy strategy)

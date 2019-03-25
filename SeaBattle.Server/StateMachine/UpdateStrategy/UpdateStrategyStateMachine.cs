@@ -6,21 +6,24 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
     using Microsoft.EntityFrameworkCore;
     using Models;
     using Services;
+    using Services.Compile;
     using Telegram.Bot.Types;
 
     public class UpdateStrategyStateMachine : IStateMachine<UpdateStrategyState>
     {
         private readonly IBotService _botService;
-        
+        private readonly IStrategyCompiler _compiler;
+
         private readonly ApplicationContext _dbContext;
         
         public UpdateStrategyState State { get; private set; } = UpdateStrategyState.Started;
 
-        private MemoryStream _newStrategy;
+        private byte[] _newStrategyAssembly;
 
-        public UpdateStrategyStateMachine(IBotService botService, ApplicationContext dbContext)
+        public UpdateStrategyStateMachine(IBotService botService, IStrategyCompiler compiler, ApplicationContext dbContext)
         {
             _botService = botService;
+            _compiler = compiler;
             _dbContext = dbContext;
         }
         
@@ -51,6 +54,18 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
 
         private async Task HandleStartedState(Update update)
         {
+            var participant = await _dbContext.Participants.FirstAsync(p => p.TelegramId == update.Message.From.Id);
+            
+            if (participant == null)
+            {
+                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                              @"Вы не зарегистрированы.
+
+Для участия необходимо использовать команду /register");
+                State = UpdateStrategyState.Canceled;
+                return;
+            }
+            
             await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
                                                           @"Пришлите вашу стратегию. 
 Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
@@ -77,11 +92,31 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
                 return;
             }
 
-            _newStrategy = new MemoryStream();
+            var memoryStream = new MemoryStream();
 
-            await _botService.Client.DownloadFileAsync(file.FilePath, _newStrategy);
-            
-            // TODO: check zip contains cs-files, try to compile, if success - ReadyToFinish, zip dll, else - compilation error message
+            await _botService.Client.DownloadFileAsync(file.FilePath, memoryStream);
+
+            using (memoryStream)
+            {
+                try
+                {
+                    _newStrategyAssembly = await _compiler.Compile(memoryStream);
+                }
+                catch (StrategyCompilationException ex)
+                {
+                    await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                                  $@"Ошибка компиляции стратегии: 
+
+{ex.Message}");
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                                  $@"Неизвестная ошибка при компиляции стратегии: 
+{ex.Message}");
+                }
+            }
             
             State = UpdateStrategyState.ReadyToFinish;
         }
@@ -93,14 +128,11 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
                 return;
             }
 
-            using (_newStrategy)
-            {
-                var participant = await _dbContext.Participants.FirstAsync(p => p.TelegramId == update.Message.From.Id);
+            var participant = await _dbContext.Participants.FirstAsync(p => p.TelegramId == update.Message.From.Id);
 
-                participant.Strategy = _newStrategy.ToArray();
+            participant.Strategy = _newStrategyAssembly;
 
-                await _dbContext.SaveChangesAsync();
-            }
+            await _dbContext.SaveChangesAsync();
             
             await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
                                                           "Стратегия успешно обновлена");

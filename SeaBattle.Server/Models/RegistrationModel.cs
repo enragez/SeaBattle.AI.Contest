@@ -8,6 +8,6 @@ namespace SeaBattle.Server.Models
         
         public string Name { get; set; }
         
-        public MemoryStream StrategyStream { get; set; }
+        public byte[] StrategyAssembly { get; set; }
     }
 }

@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Extensions;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@
     using Models;
     using Models.Commands;
     using Services;
+    using Services.Compile;
     using Services.Stats;
     using Services.UpdateNameService;
     using StateMachine;
@@ -36,7 +38,6 @@
                                                         options.MinimumSameSitePolicy = SameSiteMode.None;
                                                     });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(Configuration.GetConnectionString("ApplicationContext")));
@@ -52,7 +53,9 @@
             services.AddSingleton<IUpdateHandler, UpdateHandler>();
             services.AddSingleton<IBotService, BotService>();
             services.AddSingleton<IStatisticsService, StatisticsService>();
-            services.AddSingleton<IGameRunner, GameRunner>();
+            services.AddSingleton<IStrategyCompiler, StrategyCompiler>();
+            
+            services.AddTransient<IGameRunner, GameRunner>();
             
             services.AddSingleton<RegisterService>();
             services.AddSingleton<UpdateStrategyService>();
@@ -76,6 +79,16 @@
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.Use((context, next) =>
+                    {
+                        if (Utils.CurrentApplicationUrl == null)
+                        {
+                            Utils.CurrentApplicationUrl = context.Request.GetDisplayUrl();
+                        }
+                        
+                        return next.Invoke();
+                    });
+            
             app.UseMvc();
 
             app.UseStaticFiles();

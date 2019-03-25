@@ -47,6 +47,15 @@ namespace SeaBattle.Server.Models.Commands
 
             var player = await _dbContext.Participants.FirstOrDefaultAsync(p => p.Id == id);
 
+            if (player == null)
+            {
+                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                              $@"Игрок с идентификатором {id} не найден.
+
+Для получения идентификаторов необходимо использовать команду /players");
+                return;
+            }
+            
             var stats = _statsService.Get(player);
 
             await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, stats);

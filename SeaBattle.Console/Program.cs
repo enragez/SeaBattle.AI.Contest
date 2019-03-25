@@ -22,10 +22,8 @@
                                    Id = rnd.Next(100, 200),
                                    Strategy = Practice.GetStrategy(StrategyType.FullRandom)
                                };
-
-            var gameId = rnd.Next(0, 100);
             
-            var engine = new Engine(gameId, participant1, participant2);
+            var engine = new Engine(participant1, participant2);
             
             var result = engine.StartGame();
 

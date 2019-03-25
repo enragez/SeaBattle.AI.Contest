@@ -5,8 +5,6 @@ namespace SeaBattle.Engine.Models
 
     public class GameResult
     {
-        public int Id { get; set; }
-        
         public DateTime StartTime { get; set; }
         
         public DateTime EndTime { get; set; }
