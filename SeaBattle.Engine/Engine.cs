@@ -3,8 +3,14 @@ namespace SeaBattle.Engine
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using Enums;
+    using Exceptions;
     using Models;
+    using Models.Field;
+    using Models.Serializable;
     using Models.Ships;
+    using Strategy;
+    using Utils;
 
     public class Engine
     {
@@ -22,63 +28,73 @@ namespace SeaBattle.Engine
 
         private Field _startPlayer2Field;
         
-        private readonly Participant[] _participants = new Participant[2];
+        private readonly PlayerDto[] _playerDtos = new PlayerDto[2];
         
         private readonly Queue<ExtendedTurnResult> _turnsHistory = new Queue<ExtendedTurnResult>();
 
         private readonly DateTime _gameStartTime;
         
-        public Engine(Participant participant1, Participant participant2)
+        public Engine(PlayerDto playerDto1, PlayerDto playerDto2)
         {
             _fields.Add(0, new Fields());
             _fields.Add(1, new Fields());
 
-            _participants[0] = participant1;
+            _playerDtos[0] = playerDto1;
             
-            _participants[1] = participant2;
+            _playerDtos[1] = playerDto2;
 
             _gameStartTime = DateTime.Now;
         }
 
         public GameResult StartGame()
         {
-            _player1 = CreatePlayer(_participants[0], 0);
-            _player2 = CreatePlayer(_participants[1], 1);
+            try
+            {
+                _player1 = CreatePlayer(_playerDtos[0], 0);
+            }
+            catch (CheatDetectedException)
+            {
+                return GetGameResult(_playerDtos[1]);
+            }
+            
+            try
+            {
+                _player2 = CreatePlayer(_playerDtos[1], 1);
+            }
+            catch (CheatDetectedException)
+            {
+                return GetGameResult(_playerDtos[0]);
+            }
             
             _player1.GamePhaseChanged(GamePhase.Planning);
             _player2.GamePhaseChanged(GamePhase.Planning);
-            
-            _player1.Strategy.PrepareField();
-            _player2.Strategy.PrepareField();
 
+            try
+            {
+                _player1.Strategy.PrepareField();
+            }
+            catch (CheatDetectedException)
+            {
+                return GetGameResult(_playerDtos[1]);
+            }
+            
+            try
+            {
+                _player2.Strategy.PrepareField();
+            }
+            catch (CheatDetectedException)
+            {
+                return GetGameResult(_playerDtos[0]);
+            }
+            
             if (!FieldValidator.IsFieldValid(_player1.Field))
             {
-                return new GameResult
-                       {
-                           StartTime = _gameStartTime,
-                           EndTime = DateTime.Now,
-                           Participant1 = _participants[0],
-                           Participant2 = _participants[1],
-                           Winner = _participants[1],
-                           TurnsHistory = _turnsHistory,
-                           Participant1StartField = _startPlayer1Field,
-                           Participant2StartField = _startPlayer2Field
-                       };
+                return GetGameResult(_playerDtos[1]);
             }
 
             if (!FieldValidator.IsFieldValid(_player2.Field))
             {
-                return new GameResult
-                       {
-                           StartTime = _gameStartTime,
-                           EndTime = DateTime.Now,
-                           Participant1 = _participants[0],
-                           Participant2 = _participants[1],
-                           Winner = _participants[0],
-                           TurnsHistory = _turnsHistory,
-                           Participant1StartField = _startPlayer1Field,
-                           Participant2StartField = _startPlayer2Field
-                       };
+                return GetGameResult(_playerDtos[0]);
             }
 
             _startPlayer1Field = new Field(_player1.Field.ShipsPlaced);
@@ -97,19 +113,19 @@ namespace SeaBattle.Engine
             var turnCounter = -1;
             
             var turnCoordinates = currentStrategy.DoTurn(new TurnResult(new Coordinate(-1, -1), 
-                                                                        _currentTurnPlayer.Id,
-                                                                        _participants[_currentTurnPlayer.Id].Id,
+                                                                        _currentTurnPlayer.IngameId,
+                                                                        _playerDtos[_currentTurnPlayer.IngameId].Id,
                                                                         turnCounter));
             turnCounter++;
             var turn = new Turn(turnCoordinates);
 
             while (true)
             {
-                var turnResult = new TurnResult(turnCoordinates, _currentTurnPlayer.Id, _participants[_currentTurnPlayer.Id].Id, turnCounter);
+                var turnResult = new TurnResult(turnCoordinates, _currentTurnPlayer.IngameId, _playerDtos[_currentTurnPlayer.IngameId].Id, turnCounter);
                 
                 if (!turn.IsValid())
                 {
-                    var currentTurnPlayerId = _currentTurnPlayer.Id;
+                    var currentTurnPlayerId = _currentTurnPlayer.IngameId;
 
                     turnResult.NewCellState = CellState.Empty;
                     _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
@@ -117,11 +133,16 @@ namespace SeaBattle.Engine
                     var extendedTurnRes = new ExtendedTurnResult
                                           {
                                               Id = turnCounter,
-                                              PlayerId = _currentTurnPlayer.Id,
-                                              ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                              PlayerId = _currentTurnPlayer.IngameId,
+                                              ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
                                           };
                     extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Empty);
                     _turnsHistory.Enqueue(extendedTurnRes);
+                    
+                    if (IsBothPlayersReachedTurnsLimit())
+                    {
+                        return FinishGameByTurnsLimit();
+                    }
 
                     _currentTurnPlayer = GetPlayer(SwapId(currentTurnPlayerId));
                     _enemyPlayer = GetPlayer(currentTurnPlayerId);
@@ -143,8 +164,8 @@ namespace SeaBattle.Engine
                         var extendedTurnRes = new ExtendedTurnResult
                                               {
                                                   Id = turnCounter,
-                                                  PlayerId = _currentTurnPlayer.Id,
-                                                  ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                                  PlayerId = _currentTurnPlayer.IngameId,
+                                                  ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
                                               };
                         foreach (var coordinate in killedShipCoordinates)
                         {
@@ -152,21 +173,16 @@ namespace SeaBattle.Engine
                         }
                         
                         _turnsHistory.Enqueue(extendedTurnRes);
-
-                        if (IsPlayerLost(_enemyPlayer.Id))
+                        
+                        if (IsBothPlayersReachedTurnsLimit())
                         {
-                            return new GameResult
-                                   {
-                                       StartTime = _gameStartTime,
-                                       EndTime = DateTime.Now,
-                                       Participant1 = _participants[0],
-                                       Participant2 = _participants[1],
-                                       Winner = _participants[_currentTurnPlayer.Id],
-                                       TurnsHistory = _turnsHistory,
-                                       Participant1StartField = _startPlayer1Field,
-                                       Participant2StartField = _startPlayer2Field
-                                   };
-                       }
+                            return FinishGameByTurnsLimit();
+                        }
+
+                        if (IsPlayerLost(_enemyPlayer.IngameId))
+                        {
+                            return GetGameResult(_playerDtos[_currentTurnPlayer.IngameId]);
+                        }
                     }
                     else
                     {
@@ -176,11 +192,16 @@ namespace SeaBattle.Engine
                         var extendedTurnRes = new ExtendedTurnResult
                                               {
                                                   Id = turnCounter,
-                                                  PlayerId = _currentTurnPlayer.Id,
-                                                  ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                                  PlayerId = _currentTurnPlayer.IngameId,
+                                                  ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
                                               };
                         extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Hit);
                         _turnsHistory.Enqueue(extendedTurnRes);
+                        
+                        if (IsBothPlayersReachedTurnsLimit())
+                        {
+                            return FinishGameByTurnsLimit();
+                        }
                     }
                 }
                 else
@@ -192,13 +213,18 @@ namespace SeaBattle.Engine
                     var extendedTurnRes = new ExtendedTurnResult
                                           {
                                               Id = turnCounter,
-                                              PlayerId = _currentTurnPlayer.Id,
-                                              ParticipantId = _participants[_currentTurnPlayer.Id].Id
+                                              PlayerId = _currentTurnPlayer.IngameId,
+                                              ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
                                           };
                     extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Miss);
                     _turnsHistory.Enqueue(extendedTurnRes);
+                    
+                    if (IsBothPlayersReachedTurnsLimit())
+                    {
+                        return FinishGameByTurnsLimit();
+                    }
 
-                    var currentTurnPlayerId = _currentTurnPlayer.Id;
+                    var currentTurnPlayerId = _currentTurnPlayer.IngameId;
 
                     _currentTurnPlayer = GetPlayer(SwapId(currentTurnPlayerId));
                     _enemyPlayer = GetPlayer(currentTurnPlayerId);
@@ -294,6 +320,55 @@ namespace SeaBattle.Engine
         {
             return GetPlayer(playerId).Field.GetCellsCountWithState(CellState.Kill) == 20;
         }
+
+        private bool IsBothPlayersReachedTurnsLimit()
+        {
+            var player1TurnsCount = _turnsHistory.Count(t => t.PlayerId == _player1.IngameId);
+            var player2TurnsCount = _turnsHistory.Count(t => t.PlayerId == _player2.IngameId);
+
+            return player1TurnsCount >= 100 && player2TurnsCount >= 100;
+        }
+
+        private GameResult FinishGameByTurnsLimit()
+        {
+            var player1HitsCount = _fields[1].Field.GetCellsCountWithState(CellState.Hit) +
+                                   _fields[1].Field.GetCellsCountWithState(CellState.Kill);
+            
+            var player2HitsCount = _fields[0].Field.GetCellsCountWithState(CellState.Hit) +
+                                   _fields[0].Field.GetCellsCountWithState(CellState.Kill);
+
+            PlayerDto winner;
+            
+            if (player1HitsCount > player2HitsCount)
+            {
+                winner = _playerDtos[0];
+            }
+            else if (player2HitsCount > player1HitsCount)
+            {
+                winner = _playerDtos[1];
+            }
+            else
+            {
+                winner = _playerDtos[CoinFlip()];
+            }
+            
+            return GetGameResult(winner);
+        }
+
+        private GameResult GetGameResult(PlayerDto winner)
+        {
+            return new GameResult
+                   {
+                       StartTime = _gameStartTime,
+                       EndTime = DateTime.Now,
+                       Participant1 = new ParticipantModel { PlayerDto = _playerDtos[0], IngamePlayerId = _player1.IngameId },
+                       Participant2 = new ParticipantModel { PlayerDto = _playerDtos[1], IngamePlayerId = _player2.IngameId },
+                       Winner = winner,
+                       TurnsHistory = _turnsHistory,
+                       Participant1StartField = _startPlayer1Field,
+                       Participant2StartField = _startPlayer2Field
+                   };
+        }
         
         private int CoinFlip()
         {
@@ -307,21 +382,21 @@ namespace SeaBattle.Engine
                        : 0;
         }
 
-        private Player CreatePlayer(Participant participant, int participantIndex)
+        private Player CreatePlayer(PlayerDto playerDto, int participantIndex)
         {
             var playerField = _fields[participantIndex].Field;
 
             var enemyField = _fields[SwapId(participantIndex)].FieldForEnemy;
 
-            var strategyWrapper = participant.StrategyAssembly != null 
-                                      ? CreateStrategyWrapper(participant.StrategyAssembly)
-                                      : CreateStrategyWrapper(participant.Strategy);
+            var strategyWrapper = playerDto.StrategyAssembly != null 
+                                      ? CreateStrategyWrapper(playerDto.StrategyAssembly)
+                                      : CreateStrategyWrapper(playerDto.Strategy);
             
             strategyWrapper.Setup(playerField, enemyField, participantIndex);
 
             return new Player
                    {
-                       Id = participantIndex,
+                       IngameId = participantIndex,
                        Field = playerField,
                        EnemyField = enemyField,
                        Strategy = strategyWrapper,

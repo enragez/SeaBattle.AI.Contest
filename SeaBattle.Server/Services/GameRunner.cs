@@ -3,6 +3,7 @@ namespace SeaBattle.Server.Services
     using System.Threading.Tasks;
     using Engine;
     using Engine.Models;
+    using Engine.Models.Serializable;
     using Entities;
     using Models;
     using Newtonsoft.Json;
@@ -21,13 +22,13 @@ namespace SeaBattle.Server.Services
 
         public (PlayedGame, GameResult) StartGame(Participant player1, Participant player2, bool ratedGame)
         {
-            var participant1 = new SeaBattle.Engine.Models.Participant
+            var participant1 = new SeaBattle.Engine.Models.PlayerDto
                                {
                                    Id = player1.Id,
                                    StrategyAssembly = player1.Strategy
                                };
 
-            var participant2 = new SeaBattle.Engine.Models.Participant
+            var participant2 = new SeaBattle.Engine.Models.PlayerDto
                                {
                                    Id = player2.Id,
                                    StrategyAssembly = player2.Strategy

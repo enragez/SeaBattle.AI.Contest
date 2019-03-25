@@ -1,10 +1,12 @@
-namespace SeaBattle.Engine.Models
+namespace SeaBattle.Engine.Models.Serializable
 {
     using System;
     using System.Linq;
+    using Field;
+    using Utils;
 
     [Serializable]
-    public class SerializableGameResult
+    internal class SerializableGameResult
     {
         public SerializableGameResult()
         {
@@ -16,8 +18,8 @@ namespace SeaBattle.Engine.Models
             StartTime = result.StartTime;
             EndTime = result.EndTime;
             WinnerId = result.Winner.Id;
-            Participant1Id = result.Participant1.Id;
-            Participant2Id = result.Participant2.Id;
+            Participant1 = result.Participant1;
+            Participant2 = result.Participant2;
             TurnsHistory = result.TurnsHistory.Select(tr => new SerializableTurnResult(tr)).ToArray();
             Participant1StartField = ConvertField(result.Participant1StartField);
             Participant2StartField = ConvertField(result.Participant2StartField);
@@ -29,10 +31,10 @@ namespace SeaBattle.Engine.Models
         
         public int WinnerId { get; set; }
         
-        public int Participant1Id { get; set; }
+        public ParticipantModel Participant1 { get; set; }
         
-        public int Participant2Id { get; set; }
-        
+        public ParticipantModel Participant2 { get; set; }
+      
         public SerializableTurnResult[] TurnsHistory { get; set; }
         
         public Row[] Participant1StartField { get; set; }

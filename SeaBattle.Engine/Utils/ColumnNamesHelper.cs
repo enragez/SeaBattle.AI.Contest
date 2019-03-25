@@ -1,8 +1,8 @@
-namespace SeaBattle.Engine
+namespace SeaBattle.Engine.Utils
 {
     using System.Collections.Generic;
 
-    public class ColumnNamesHelper
+    internal static class ColumnNamesHelper
     {
         public static readonly List<string> ColumnNames = new List<string>
                                                      {

@@ -1,4 +1,4 @@
-namespace SeaBattle.Engine.Models
+namespace SeaBattle.Engine.Enums
 {
     public enum CellState
     {

@@ -9,15 +9,15 @@ namespace SeaBattle.Engine.Models
         
         public DateTime EndTime { get; set; }
         
-        public Participant Winner { get; set; }
+        public PlayerDto Winner { get; set; }
         
-        public Participant Participant1 { get; set; }
+        public ParticipantModel Participant1 { get; set; }
         
-        public Participant Participant2 { get; set; }
+        public ParticipantModel Participant2 { get; set; }
         
-        public Field Participant1StartField { get; set; }
+        public Field.Field Participant1StartField { get; set; }
         
-        public Field Participant2StartField { get; set; }
+        public Field.Field Participant2StartField { get; set; }
         
         public IEnumerable<ExtendedTurnResult> TurnsHistory { get; set; }
     }

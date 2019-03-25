@@ -1,7 +1,8 @@
-namespace SeaBattle.Engine
+namespace SeaBattle.Console
 {
     using System.IO;
-    using Models;
+    using Engine.Models;
+    using Engine.Models.Serializable;
     using Newtonsoft.Json;
 
     public class GameResultSaver

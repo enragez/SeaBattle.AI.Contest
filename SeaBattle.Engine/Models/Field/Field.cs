@@ -1,10 +1,12 @@
-namespace SeaBattle.Engine.Models
+namespace SeaBattle.Engine.Models.Field
 {
     using System.Collections.Generic;
     using System.Data;
     using System.Linq;
+    using Enums;
     using Exceptions;
     using Ships;
+    using Utils;
 
     public class Field
     {

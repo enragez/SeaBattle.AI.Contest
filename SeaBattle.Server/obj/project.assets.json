@@ -12363,6 +12363,7 @@
             "version": "[2.2.0, )"
           },
           "Microsoft.NETCore.App": {
+            "suppressParent": "All",
             "target": "Package",
             "version": "[2.1.0, )",
             "autoReferenced": true
@@ -12389,7 +12390,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.EntityFrameworkCore (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.EntityFrameworkCore 2.2.3.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.EntityFrameworkCore (>= 2.1.1 && < 2.2.0) but version Microsoft.EntityFrameworkCore 2.2.3 was resolved.",
       "libraryId": "Microsoft.EntityFrameworkCore",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12399,7 +12400,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.EntityFrameworkCore.Abstractions (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.EntityFrameworkCore.Abstractions 2.2.3.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.EntityFrameworkCore.Abstractions (>= 2.1.1 && < 2.2.0) but version Microsoft.EntityFrameworkCore.Abstractions 2.2.3 was resolved.",
       "libraryId": "Microsoft.EntityFrameworkCore.Abstractions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12409,7 +12410,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.EntityFrameworkCore.Analyzers (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.EntityFrameworkCore.Analyzers 2.2.3.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.EntityFrameworkCore.Analyzers (>= 2.1.1 && < 2.2.0) but version Microsoft.EntityFrameworkCore.Analyzers 2.2.3 was resolved.",
       "libraryId": "Microsoft.EntityFrameworkCore.Analyzers",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12419,7 +12420,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.EntityFrameworkCore.Design (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.EntityFrameworkCore.Design 2.2.3.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.EntityFrameworkCore.Design (>= 2.1.1 && < 2.2.0) but version Microsoft.EntityFrameworkCore.Design 2.2.3 was resolved.",
       "libraryId": "Microsoft.EntityFrameworkCore.Design",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12429,7 +12430,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.EntityFrameworkCore.Relational (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.EntityFrameworkCore.Relational 2.2.3.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.EntityFrameworkCore.Relational (>= 2.1.1 && < 2.2.0) but version Microsoft.EntityFrameworkCore.Relational 2.2.3 was resolved.",
       "libraryId": "Microsoft.EntityFrameworkCore.Relational",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12439,7 +12440,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.EntityFrameworkCore.Tools (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.EntityFrameworkCore.Tools 2.2.3.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.EntityFrameworkCore.Tools (>= 2.1.1 && < 2.2.0) but version Microsoft.EntityFrameworkCore.Tools 2.2.3 was resolved.",
       "libraryId": "Microsoft.EntityFrameworkCore.Tools",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12449,7 +12450,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Caching.Abstractions (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Caching.Abstractions 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Caching.Abstractions (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Caching.Abstractions 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Caching.Abstractions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12459,7 +12460,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Caching.Memory (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Caching.Memory 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Caching.Memory (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Caching.Memory 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Caching.Memory",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12469,7 +12470,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Configuration (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Configuration 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Configuration (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Configuration 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Configuration",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12479,7 +12480,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Configuration.Abstractions (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Configuration.Abstractions 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Configuration.Abstractions (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Configuration.Abstractions 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Configuration.Abstractions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12489,7 +12490,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Configuration.Binder (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Configuration.Binder 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Configuration.Binder (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Configuration.Binder 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Configuration.Binder",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12499,7 +12500,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.DependencyInjection (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.DependencyInjection 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.DependencyInjection (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.DependencyInjection 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.DependencyInjection",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12509,7 +12510,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.DependencyInjection.Abstractions (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.DependencyInjection.Abstractions 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.DependencyInjection.Abstractions (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.DependencyInjection.Abstractions 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.DependencyInjection.Abstractions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12519,7 +12520,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Logging (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Logging 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Logging (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Logging 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Logging",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12529,7 +12530,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Logging.Abstractions (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Logging.Abstractions 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Logging.Abstractions (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Logging.Abstractions 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Logging.Abstractions",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12539,7 +12540,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Options (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Options 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Options (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Options 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Options",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12549,7 +12550,7 @@
       "code": "NU1608",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Версия обнаруженного пакета нарушает ограничение зависимости: Microsoft.AspNetCore.App 2.1.1 требуется Microsoft.Extensions.Primitives (>= 2.1.1 && < 2.2.0), но в результате разрешения получена версия Microsoft.Extensions.Primitives 2.2.0.",
+      "message": "Detected package version outside of dependency constraint: Microsoft.AspNetCore.App 2.1.1 requires Microsoft.Extensions.Primitives (>= 2.1.1 && < 2.2.0) but version Microsoft.Extensions.Primitives 2.2.0 was resolved.",
       "libraryId": "Microsoft.Extensions.Primitives",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12559,7 +12560,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"Antlr 3.4.1.9004\" был восстановлен с помощью \".NETFramework,Version=v4.6.1\", а не целевой платформы проекта \".NETCoreApp,Version=v2.1\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'Antlr 3.4.1.9004' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.1'. This package may not be fully compatible with your project.",
       "libraryId": "Antlr",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12569,7 +12570,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"Microsoft.AspNet.Web.Optimization 1.1.3\" был восстановлен с помощью \".NETFramework,Version=v4.6.1\", а не целевой платформы проекта \".NETCoreApp,Version=v2.1\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'Microsoft.AspNet.Web.Optimization 1.1.3' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.1'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.AspNet.Web.Optimization",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12579,7 +12580,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"Microsoft.Web.Infrastructure 1.0.0\" был восстановлен с помощью \".NETFramework,Version=v4.6.1\", а не целевой платформы проекта \".NETCoreApp,Version=v2.1\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'Microsoft.Web.Infrastructure 1.0.0' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.1'. This package may not be fully compatible with your project.",
       "libraryId": "Microsoft.Web.Infrastructure",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"
@@ -12589,7 +12590,7 @@
       "code": "NU1701",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Пакет \"WebGrease 1.5.2\" был восстановлен с помощью \".NETFramework,Version=v4.6.1\", а не целевой платформы проекта \".NETCoreApp,Version=v2.1\". Этот пакет может быть не полностью совместим с вашим проектом.",
+      "message": "Package 'WebGrease 1.5.2' was restored using '.NETFramework,Version=v4.6.1' instead of the project target framework '.NETCoreApp,Version=v2.1'. This package may not be fully compatible with your project.",
       "libraryId": "WebGrease",
       "targetGraphs": [
         ".NETCoreApp,Version=v2.1"

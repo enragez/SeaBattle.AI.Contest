@@ -1,6 +1,8 @@
-namespace SeaBattle.Engine
+namespace SeaBattle.Engine.Strategy
 {
     using Models;
+    using Models.Field;
+    using Models.Serializable;
 
     public abstract class PlayerStrategy
     {

@@ -1,5 +1,6 @@
-namespace SeaBattle.Engine.Models
+namespace SeaBattle.Engine.Models.Field
 {
+    using Enums;
     using Exceptions;
 
     internal class Cell

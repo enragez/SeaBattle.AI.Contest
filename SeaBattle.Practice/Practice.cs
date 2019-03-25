@@ -1,6 +1,7 @@
 namespace SeaBattle.Practice
 {
     using Engine;
+    using Engine.Strategy;
     using Strategies;
 
     public class Practice

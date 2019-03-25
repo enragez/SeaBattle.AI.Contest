@@ -1,16 +1,19 @@
 namespace SeaBattle.Engine.Models
 {
     using System.Collections.Generic;
+    using Enums;
+    using Serializable;
+    using Strategy;
 
     internal class Player
     {
         internal StrategyWrapper Strategy { get; set; }
         
-        internal Field Field { get; set; }
+        internal Field.Field Field { get; set; }
         
-        internal Field EnemyField { get; set; }
+        internal Field.Field EnemyField { get; set; }
 
-        internal int Id { get; set; }
+        internal int IngameId { get; set; }
         
         internal Queue<TurnResult> TurnsHistory { get; set; }
 

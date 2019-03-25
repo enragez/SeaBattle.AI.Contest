@@ -1,5 +1,7 @@
-namespace SeaBattle.Engine.Models
+namespace SeaBattle.Engine.Models.Serializable
 {
+    using Enums;
+
     public class SerializableCell
     {
         public int Row { get; set; }

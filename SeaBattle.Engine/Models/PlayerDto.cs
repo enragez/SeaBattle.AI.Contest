@@ -1,10 +1,10 @@
 namespace SeaBattle.Engine.Models
 {
-    public class Participant
+    using Strategy;
+
+    public class PlayerDto
     {
         public int Id { get; set; }
-        
-        public string StrategyAssemblyPath { get; set; }
         
         public byte[] StrategyAssembly { get; set; }
         

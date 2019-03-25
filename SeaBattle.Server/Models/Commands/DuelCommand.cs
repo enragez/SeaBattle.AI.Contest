@@ -1,10 +1,7 @@
 namespace SeaBattle.Server.Models.Commands
 {
-    using System;
     using System.Threading.Tasks;
-    using Engine.Models;
     using Entities;
-    using Microsoft.AspNetCore.Http;
     using Microsoft.EntityFrameworkCore;
     using Services;
     using Telegram.Bot.Types;

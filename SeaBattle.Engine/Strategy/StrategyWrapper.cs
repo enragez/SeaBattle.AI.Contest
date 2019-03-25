@@ -1,4 +1,4 @@
-namespace SeaBattle.Engine
+namespace SeaBattle.Engine.Strategy
 {
     using System;
     using System.Linq;
@@ -6,6 +6,8 @@ namespace SeaBattle.Engine
     using System.Security;
     using Exceptions;
     using Models;
+    using Models.Field;
+    using Models.Serializable;
 
     internal class StrategyWrapper
     {

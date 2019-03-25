@@ -1,6 +1,7 @@
-namespace SeaBattle.Engine.Models
+namespace SeaBattle.Engine.Models.Serializable
 {
     using System;
+    using Enums;
 
     [Serializable]
     public class Column

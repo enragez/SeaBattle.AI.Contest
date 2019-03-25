@@ -1,8 +1,9 @@
 namespace SeaBattle.Practice.Strategies
 {
-    using Engine;
     using Engine.Models;
+    using Engine.Models.Serializable;
     using Engine.Models.Ships;
+    using Engine.Strategy;
 
     public class Cycle: PlayerStrategy
     {

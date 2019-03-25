@@ -1,4 +1,4 @@
-namespace SeaBattle.Engine.Models
+namespace SeaBattle.Engine.Models.Serializable
 {
     using System;
     using System.Linq;
@@ -13,7 +13,8 @@ namespace SeaBattle.Engine.Models
 
         public SerializableTurnResult(ExtendedTurnResult turnResult)
         {
-            PlayerId = turnResult.ParticipantId;
+            IngameId = turnResult.PlayerId;
+            ParticipantId = turnResult.ParticipantId;
             Id = turnResult.Id;
 
             ChangedCells = turnResult.ChangedCells.Select(kvp => new SerializableCell
@@ -26,7 +27,9 @@ namespace SeaBattle.Engine.Models
         
         public SerializableCell[] ChangedCells { get; set; }
         
-        public int PlayerId { get; set; }
+        public int ParticipantId { get; set; }
+        
+        public int IngameId { get; set; }
         
         public int Id { get; set; }
     }

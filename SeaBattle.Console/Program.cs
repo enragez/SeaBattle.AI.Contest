@@ -11,13 +11,13 @@
         {
             var rnd = new Random();
 
-            var participant1 = new Participant
+            var participant1 = new PlayerDto
                                {
                                    Id = rnd.Next(0, 100),
                                    Strategy = Practice.GetStrategy(StrategyType.Cycle)
                                };
             
-            var participant2 = new Participant
+            var participant2 = new PlayerDto
                                {
                                    Id = rnd.Next(100, 200),
                                    Strategy = Practice.GetStrategy(StrategyType.FullRandom)

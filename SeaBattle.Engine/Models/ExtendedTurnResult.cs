@@ -1,6 +1,7 @@
 namespace SeaBattle.Engine.Models
 {
     using System.Collections.Generic;
+    using Enums;
 
     public class ExtendedTurnResult
     {

@@ -32,10 +32,6 @@
         <WarningLevel>4</WarningLevel>
     </PropertyGroup>
     <ItemGroup>
-        <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
-          <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-          <Private>True</Private>
-        </Reference>
         <Reference Include="System" />
         <Reference Include="System.Core" />
         <Reference Include="System.Data" />
@@ -44,41 +40,38 @@
         <Reference Include="System.Xml" />
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="ColumnNamesHelper.cs" />
         <Compile Include="Engine.cs" />
+        <Compile Include="Enums\CellState.cs" />
+        <Compile Include="Enums\GamePhase.cs" />
         <Compile Include="Exceptions\CheatDetectedException.cs" />
         <Compile Include="Exceptions\InvalidShipLocationException.cs" />
-        <Compile Include="GameResultSaver.cs" />
-        <Compile Include="Models\Cell.cs" />
-        <Compile Include="Models\Column.cs" />
         <Compile Include="Models\Coordinate.cs" />
         <Compile Include="Models\ExtendedTurnResult.cs" />
-        <Compile Include="Models\Field.cs" />
-        <Compile Include="Models\CellState.cs" />
-        <Compile Include="Models\Fields.cs" />
-        <Compile Include="Models\FieldValidator.cs" />
-        <Compile Include="Models\GamePhase.cs" />
+        <Compile Include="Models\Field\Cell.cs" />
+        <Compile Include="Models\Field\Field.cs" />
+        <Compile Include="Models\Field\Fields.cs" />
+        <Compile Include="Models\Field\MultidimensionalCellsArray.cs" />
         <Compile Include="Models\GameResult.cs" />
-        <Compile Include="Models\MultidimensionalCellsArray.cs" />
-        <Compile Include="Models\Participant.cs" />
+        <Compile Include="Models\PlayerDto.cs" />
+        <Compile Include="Models\ParticipantModel.cs" />
         <Compile Include="Models\Player.cs" />
-        <Compile Include="Models\Row.cs" />
-        <Compile Include="Models\SerializableCell.cs" />
-        <Compile Include="Models\SerializableGameResult.cs" />
-        <Compile Include="Models\SerializableTurnResult.cs" />
-        <Compile Include="Models\TurnResult.cs" />
+        <Compile Include="Models\Serializable\Column.cs" />
+        <Compile Include="Models\Serializable\Row.cs" />
+        <Compile Include="Models\Serializable\SerializableCell.cs" />
+        <Compile Include="Models\Serializable\SerializableGameResult.cs" />
+        <Compile Include="Models\Serializable\SerializableTurnResult.cs" />
+        <Compile Include="Models\Serializable\TurnResult.cs" />
         <Compile Include="Models\Ships\Battleship.cs" />
         <Compile Include="Models\Ships\Boat.cs" />
         <Compile Include="Models\Ships\Cruiser.cs" />
         <Compile Include="Models\Ships\Destroyer.cs" />
         <Compile Include="Models\Ships\Ship.cs" />
         <Compile Include="Models\Turn.cs" />
-        <Compile Include="PlayerStrategy.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="StrategyWrapper.cs" />
-    </ItemGroup>
-    <ItemGroup>
-      <None Include="packages.config" />
+        <Compile Include="Strategy\PlayerStrategy.cs" />
+        <Compile Include="Strategy\StrategyWrapper.cs" />
+        <Compile Include="Utils\ColumnNamesHelper.cs" />
+        <Compile Include="Utils\FieldValidator.cs" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

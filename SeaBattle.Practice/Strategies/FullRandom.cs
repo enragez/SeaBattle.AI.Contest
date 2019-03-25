@@ -1,9 +1,10 @@
 namespace SeaBattle.Practice.Strategies
 {
     using System;
-    using Engine;
     using Engine.Models;
+    using Engine.Models.Serializable;
     using Engine.Models.Ships;
+    using Engine.Strategy;
 
     public class FullRandom: PlayerStrategy
     {

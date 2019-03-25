@@ -1,7 +1,7 @@
 namespace SeaBattle.Server.Models
 {
     using System;
-    using Engine.Models;
+    using Engine.Models.Serializable;
 
     public class Game
     {
