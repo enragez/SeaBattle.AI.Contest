@@ -82,6 +82,14 @@ namespace SeaBattle.Server.StateMachine.Registration
 
         private async Task HandleWaitingForStrategyState(Update update)
         {
+            if (update.Message.Document == null)
+            {
+                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                                                              @"Пришлите вашу стратегию. 
+Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
+                return;
+            }
+            
             var file = await _botService.Client.GetFileAsync(update.Message.Document.FileId);
 
             var extension = Path.GetExtension(file.FilePath);
