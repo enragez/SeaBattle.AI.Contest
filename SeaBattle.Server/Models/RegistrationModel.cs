@@ -1,7 +1,5 @@
 namespace SeaBattle.Server.Models
 {
-    using System.IO;
-
     public class RegistrationModel
     {
         public int TelegramId { get; set; }

@@ -4,9 +4,9 @@ namespace SeaBattle.Server.Models
 
     public class StrategyCompilationException : Exception
     {
-        public StrategyCompilationException(string message) : base(message)
+        public StrategyCompilationException(string message) 
+            : base(message)
         {
-            
         }
     }
 }

@@ -1,6 +1,5 @@
 namespace SeaBattle.Server.Services
 {
-    using System;
     using System.Threading.Tasks;
     using Engine;
     using Engine.Models;

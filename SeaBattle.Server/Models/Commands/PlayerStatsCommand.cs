@@ -1,6 +1,5 @@
 namespace SeaBattle.Server.Models.Commands
 {
-    using System.Text;
     using System.Threading.Tasks;
     using Microsoft.EntityFrameworkCore;
     using Services;
