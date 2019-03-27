@@ -37,6 +37,11 @@ namespace SeaBattle.Server.Services.Compile
                 {
                     var text = await reader.ReadToEndAsync();
 
+                    if (text.Contains("System.Reflection"))
+                    {
+                        throw new StrategyCompilationException("В стратегии присутствует рефлексия");
+                    }
+
                     syntaxTrees.Add(CSharpSyntaxTree.ParseText(text));
                 }
             }
