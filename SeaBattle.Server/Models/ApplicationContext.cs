@@ -5,9 +5,9 @@ namespace SeaBattle.Server.Models
 
     public sealed class ApplicationContext : DbContext
     {
-        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) 
+            : base(options)
         {
-            Database.EnsureCreated();
         }
         
         public DbSet<SeaBattle.Server.Entities.Participant> Participants { get; set; }
@@ -16,11 +16,6 @@ namespace SeaBattle.Server.Models
         
         public DbSet<PlayedGame> PlayedGames { get; set; }
         
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Entities.Participant>()
-                     .HasOne(e => e.Statistic).WithOne(e => e.Participant)
-                     .HasForeignKey<Statistic>(e => e.ParticipantId);
-        }
+        public DbSet<StrategySource> StrategySources { get; set; }
     }
 }

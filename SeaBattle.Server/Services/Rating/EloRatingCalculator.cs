@@ -4,7 +4,7 @@ namespace SeaBattle.Server.Services.Rating
 
     public class EloRatingCalculator : IEloRatingCalculator
     {
-        private const int Kfactor = 15;
+        private const int Kfactor = 25;
         
         public (double, double) Calculate(double ratingA, double ratingB, double scoreA, double scoreB)
         {

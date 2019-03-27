@@ -35,4 +35,8 @@
       <ProjectReference Include="..\SeaBattle.Engine\SeaBattle.Engine.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Migrations" />
+    </ItemGroup>
+
 </Project>

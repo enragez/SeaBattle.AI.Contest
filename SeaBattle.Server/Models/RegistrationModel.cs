@@ -7,5 +7,7 @@ namespace SeaBattle.Server.Models
         public string Name { get; set; }
         
         public byte[] StrategyAssembly { get; set; }
+        
+        public byte[] StrategySources { get; set; }
     }
 }

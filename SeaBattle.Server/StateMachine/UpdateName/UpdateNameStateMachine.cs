@@ -51,7 +51,7 @@ namespace SeaBattle.Server.StateMachine.UpdateName
 
         private async Task HandleStartedState(Update update)
         {
-            var participant = await _dbContext.Participants.FirstAsync(p => p.TelegramId == update.Message.From.Id);
+            var participant = await _dbContext.Participants.FirstOrDefaultAsync(p => p.TelegramId == update.Message.From.Id);
             
             if (participant == null)
             {

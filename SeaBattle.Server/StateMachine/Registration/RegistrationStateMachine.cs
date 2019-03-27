@@ -110,6 +110,7 @@ namespace SeaBattle.Server.StateMachine.Registration
                 try
                 {
                     _registration.StrategyAssembly = await _compiler.Compile(memoryStream);
+                    _registration.StrategySources = memoryStream.ToArray();
                 }
                 catch (StrategyCompilationException ex)
                 {
@@ -148,6 +149,13 @@ namespace SeaBattle.Server.StateMachine.Registration
                                           GamesPlayed = 0,
                                           Participant = participant
                                       });
+
+            _dbContext.StrategySources.Add(new StrategySource
+                                           {
+                                               Participant = participant,
+                                               LoadDate = DateTime.Now,
+                                               Sources = _registration.StrategySources
+                                           });
 
             await _dbContext.SaveChangesAsync();
             

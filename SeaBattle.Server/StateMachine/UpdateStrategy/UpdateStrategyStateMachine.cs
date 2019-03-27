@@ -3,6 +3,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
     using System;
     using System.IO;
     using System.Threading.Tasks;
+    using Entities;
     using Microsoft.EntityFrameworkCore;
     using Models;
     using Services;
@@ -19,6 +20,8 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
         public UpdateStrategyState State { get; private set; } = UpdateStrategyState.Started;
 
         private byte[] _newStrategyAssembly;
+
+        private byte[] _newStrategySources;
 
         public UpdateStrategyStateMachine(IBotService botService, IStrategyCompiler compiler, ApplicationContext dbContext)
         {
@@ -54,7 +57,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
 
         private async Task HandleStartedState(Update update)
         {
-            var participant = await _dbContext.Participants.FirstAsync(p => p.TelegramId == update.Message.From.Id);
+            var participant = await _dbContext.Participants.FirstOrDefaultAsync(p => p.TelegramId == update.Message.From.Id);
             
             if (participant == null)
             {
@@ -101,6 +104,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
                 try
                 {
                     _newStrategyAssembly = await _compiler.Compile(memoryStream);
+                    _newStrategySources = memoryStream.ToArray();
                 }
                 catch (StrategyCompilationException ex)
                 {
@@ -131,6 +135,13 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
             var participant = await _dbContext.Participants.FirstAsync(p => p.TelegramId == update.Message.From.Id);
 
             participant.Strategy = _newStrategyAssembly;
+            
+            _dbContext.StrategySources.Add(new StrategySource
+                                           {
+                                               Participant = participant,
+                                               LoadDate = DateTime.Now,
+                                               Sources = _newStrategySources
+                                           });
 
             await _dbContext.SaveChangesAsync();
             

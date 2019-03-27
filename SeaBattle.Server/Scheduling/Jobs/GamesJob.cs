@@ -44,7 +44,10 @@ namespace SeaBattle.Server.Scheduling.Jobs
             }
 
             // shuffle players
-            participants = participants.RandomPermutation().ToList();
+            participants = participants.RandomPermutation()
+                                       .RandomPermutation()
+                                       .RandomPermutation()
+                                       .ToList();
 
             for (var i = 0; i < participants.Count; i += 2)
             {
@@ -62,6 +65,12 @@ namespace SeaBattle.Server.Scheduling.Jobs
 
             var participant2Statistic =
                 await dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
+            
+            // load last actual
+            await dbContext.Entry(participant1).ReloadAsync();
+            await dbContext.Entry(participant2).ReloadAsync();
+            await dbContext.Entry(participant1Statistic).ReloadAsync();
+            await dbContext.Entry(participant2Statistic).ReloadAsync();
             
             await _botService.Client.SendTextMessageAsync(_botService.ChannelId,
                                                     $@"Запущена автоматическая игра:
