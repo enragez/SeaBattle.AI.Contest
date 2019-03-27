@@ -14,6 +14,7 @@
     using Scheduling;
     using Services;
     using Services.Compile;
+    using Services.Rating;
     using Services.Stats;
     using Services.UpdateNameService;
     using StateMachine;
@@ -57,6 +58,7 @@
             services.AddSingleton<IBotService, BotService>();
             services.AddSingleton<IStatisticsService, StatisticsService>();
             services.AddSingleton<IStrategyCompiler, StrategyCompiler>();
+            services.AddSingleton<IEloRatingCalculator, EloRatingCalculator>();
             
             services.AddTransient<IGameRunner, GameRunner>();
             

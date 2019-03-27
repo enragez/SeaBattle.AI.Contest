@@ -26,10 +26,7 @@
             var engine = new Engine(participant1, participant2);
             
             var result = engine.StartGame();
-
-            var resultFile = new GameResultSaver().SaveGameResult(result);
-
-            Console.WriteLine("zaebok");
+            
             Console.ReadLine();
         }
     }

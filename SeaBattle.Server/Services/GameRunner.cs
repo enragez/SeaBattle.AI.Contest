@@ -8,15 +8,18 @@ namespace SeaBattle.Server.Services
     using Microsoft.EntityFrameworkCore;
     using Models;
     using Newtonsoft.Json;
+    using Rating;
     using Participant = Entities.Participant;
 
     public class GameRunner : IGameRunner
     {
         private readonly ApplicationContext _dbContext;
+        private readonly IEloRatingCalculator _eloRatingCalculator;
 
-        public GameRunner(ApplicationContext dbContext)
+        public GameRunner(ApplicationContext dbContext, IEloRatingCalculator eloRatingCalculator)
         {
             _dbContext = dbContext;
+            _eloRatingCalculator = eloRatingCalculator;
         }
 
         public async Task<(PlayedGame, GameResult)> StartGameAsync(Participant player1, Participant player2, bool ratedGame)
@@ -52,8 +55,7 @@ namespace SeaBattle.Server.Services
 
             if (ratedGame)
             {
-                await UpdatePlayerStatistic(player1, gameResult);
-                await UpdatePlayerStatistic(player2, gameResult);
+                await UpdatePlayerStatistics(player1, player2, gameResult);
             }
 
             var saved = false;
@@ -74,35 +76,69 @@ namespace SeaBattle.Server.Services
             return (newGame, gameResult);
         }
 
-        private async Task UpdatePlayerStatistic(Participant participant, GameResult gameResult)
+        private async Task UpdatePlayerStatistics(Participant participant1, Participant participant2,
+                                                  GameResult gameResult)
         {
-            var participantStatistic = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant.Id);
+            var participant1Stats = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant1.Id);
             
-            if (participantStatistic == null)
+            if (participant1Stats == null)
             {
-                participantStatistic = new Statistic
-                                        {
-                                            Wins = 0,
-                                            Losses = 0,
-                                            Rating = 1000,
-                                            GamesPlayed = 0,
-                                            Participant = participant
-                                        };
+                participant1Stats = new Statistic
+                                       {
+                                           Wins = 0,
+                                           Losses = 0,
+                                           Rating = 1000,
+                                           GamesPlayed = 0,
+                                           Participant = participant1
+                                       };
 
-                _dbContext.Statistic.Add(participantStatistic);
+                _dbContext.Statistic.Add(participant1Stats);
             }
-
-            participantStatistic.GamesPlayed = participantStatistic.GamesPlayed + 1;
             
-            if (gameResult.Winner.Id == participant.Id)
+            var participant2Stats = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
+            
+            if (participant2Stats == null)
             {
-                participantStatistic.Wins = participantStatistic.Wins + 1;
-                participantStatistic.Rating = participantStatistic.Rating + 25;
+                participant2Stats = new Statistic
+                                    {
+                                        Wins = 0,
+                                        Losses = 0,
+                                        Rating = 1000,
+                                        GamesPlayed = 0,
+                                        Participant = participant2
+                                    };
+
+                _dbContext.Statistic.Add(participant2Stats);
+            }
+            
+            participant1Stats.GamesPlayed = participant1Stats.GamesPlayed + 1;
+            participant2Stats.GamesPlayed = participant2Stats.GamesPlayed + 1;
+
+            var participant1Score = gameResult.Winner.Id == participant1.Id
+                                        ? 1
+                                        : 0;
+            
+            var participant2Score = gameResult.Winner.Id == participant2.Id
+                                        ? 1
+                                        : 0;
+
+            var (player1NewRating, player2NewRating) = _eloRatingCalculator.Calculate(participant1Stats.Rating,
+                                                                                      participant2Stats.Rating,
+                                                                                      participant1Score,
+                                                                                      participant2Score);
+
+            participant1Stats.Rating = player1NewRating;
+            participant2Stats.Rating = player2NewRating;
+            
+            if (gameResult.Winner.Id == participant1.Id)
+            {
+                participant1Stats.Wins = participant1Stats.Wins + 1;
+                participant2Stats.Losses = participant2Stats.Losses + 1;
             }
             else
             {
-                participantStatistic.Losses = participantStatistic.Losses + 1;
-                participantStatistic.Rating = participantStatistic.Rating - 25;
+                participant2Stats.Wins = participant2Stats.Wins + 1;
+                participant1Stats.Losses = participant1Stats.Losses + 1;
             }
         }
     }

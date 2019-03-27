@@ -66,9 +66,9 @@ namespace SeaBattle.Server.Scheduling.Jobs
             await _botService.Client.SendTextMessageAsync(_botService.ChannelId,
                                                     $@"Запущена автоматическая игра:
 
-{participant1.Name} (Id: {participant1.Id}, Рейтинг: {participant1Statistic?.Rating ?? 1000}) 
+{participant1.Name} (Id: {participant1.Id}, Рейтинг: {participant1Statistic.Rating:F2}) 
 vs
-{participant2.Name} (Id: {participant2.Id}, Рейтинг: {participant2Statistic?.Rating ?? 1000})");
+{participant2.Name} (Id: {participant2.Id}, Рейтинг: {participant2Statistic.Rating:F2})");
             
             var (playedGame, gameResult) = await _gameRunner.StartGameAsync(participant1, participant2, true);
 
@@ -85,9 +85,9 @@ vs
             await _botService.Client.SendTextMessageAsync(_botService.ChannelId,
                                                           $@"Завершена автоматическая игра.
 
-{participant1.Name} (Id: {participant1.Id}, Обновленный рейтинг: {newParticipant1Statistic.Rating})
+{participant1.Name} (Id: {participant1.Id}, Обновленный рейтинг: {newParticipant1Statistic.Rating:F2})
 vs
-{participant2.Name} (Id: {participant2.Id}, Обновленный рейтинг: {newParticipant2Statistic.Rating})
+{participant2.Name} (Id: {participant2.Id}, Обновленный рейтинг: {newParticipant2Statistic.Rating:F2})
 
 Победитель: {winner.Name} (Id: {gameResult.Winner.Id})
 

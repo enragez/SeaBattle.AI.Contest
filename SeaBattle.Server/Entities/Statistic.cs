@@ -8,7 +8,7 @@ namespace SeaBattle.Server.Entities
         
         public Participant Participant { get; set; }
         
-        public int Rating { get; set; }
+        public double Rating { get; set; }
         
         public int GamesPlayed { get; set; }
         
