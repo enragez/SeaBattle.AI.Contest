@@ -113,11 +113,25 @@ namespace SeaBattle.Engine
             var currentStrategy = _currentTurnPlayer.Strategy;
 
             var turnCounter = -1;
-            
-            var turnCoordinates = currentStrategy.DoTurn(new TurnResult(new Coordinate(-1, -1), 
+
+            Coordinate turnCoordinates;
+
+            try
+            {
+                turnCoordinates = currentStrategy.DoTurn(new TurnResult(new Coordinate(-1, -1),
                                                                         _currentTurnPlayer.IngameId,
                                                                         _playerDtos[_currentTurnPlayer.IngameId].Id,
                                                                         turnCounter));
+            }
+            catch (CheatDetectedException)
+            {
+                return GetGameResult(_playerDtos[_enemyPlayer.IngameId]);
+            }
+            catch (Exception)
+            {
+                turnCoordinates = new Coordinate(-1, -1);
+            }
+
             turnCounter++;
             var turn = new Turn(turnCoordinates);
 
@@ -145,7 +159,18 @@ namespace SeaBattle.Engine
 
                     PassTurnToAnotherPlayer();
 
-                    turnCoordinates = _currentTurnPlayer.Strategy.DoTurn(turnResult);
+                    try
+                    {
+                        turnCoordinates = _currentTurnPlayer.Strategy.DoTurn(turnResult);
+                    }
+                    catch (CheatDetectedException)
+                    {
+                        return GetGameResult(_playerDtos[_enemyPlayer.IngameId]);
+                    }
+                    catch (Exception)
+                    {
+                        turnCoordinates = new Coordinate(-1, -1);
+                    }
                     continue;
                 }
 
@@ -214,7 +239,19 @@ namespace SeaBattle.Engine
                     PassTurnToAnotherPlayer();
                 }
 
-                turnCoordinates = _currentTurnPlayer.Strategy.DoTurn(turnResult);
+                try
+                {
+                    turnCoordinates = _currentTurnPlayer.Strategy.DoTurn(turnResult);
+                }
+                catch (CheatDetectedException)
+                {
+                    return GetGameResult(_playerDtos[_enemyPlayer.IngameId]);
+                }
+                catch (Exception)
+                {
+                    turnCoordinates = new Coordinate(-1, -1);
+                }
+                
                 turnCounter++;
                 turn = new Turn(turnCoordinates);
             }
