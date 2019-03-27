@@ -6,6 +6,8 @@ namespace SeaBattle.Server.Entities
     {
         public int Id { get; set; }
         
+        public bool Rated { get; set; }
+        
         [Column(TypeName = "jsonb")]
         public string Result { get; set; }
     }

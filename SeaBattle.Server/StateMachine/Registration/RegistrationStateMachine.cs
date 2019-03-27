@@ -3,6 +3,7 @@ namespace SeaBattle.Server.StateMachine.Registration
     using System;
     using System.IO;
     using System.Threading.Tasks;
+    using Entities;
     using Models;
     using Services;
     using Services.Compile;
@@ -130,12 +131,23 @@ namespace SeaBattle.Server.StateMachine.Registration
                 return;
             }
 
-            _dbContext.Participants.Add(new Entities.Participant
-                                        {
-                                            Name = _registration.Name,
-                                            TelegramId = _registration.TelegramId,
-                                            Strategy = _registration.StrategyAssembly
-                                        });
+            var participant = new Entities.Participant
+                              {
+                                  Name = _registration.Name,
+                                  TelegramId = _registration.TelegramId,
+                                  Strategy = _registration.StrategyAssembly
+                              };
+            
+            _dbContext.Participants.Add(participant);
+
+            _dbContext.Statistic.Add(new Statistic
+                                      {
+                                          Wins = 0,
+                                          Losses = 0,
+                                          Rating = 1000,
+                                          GamesPlayed = 0,
+                                          Participant = participant
+                                      });
 
             await _dbContext.SaveChangesAsync();
             

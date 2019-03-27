@@ -21,5 +21,7 @@ namespace SeaBattle.Server.Services
         {
             await Client.SetWebhookAsync(_config.WebhookUrl);
         }
+
+        public long ChannelId => _config.ChannelId;
     }
 }

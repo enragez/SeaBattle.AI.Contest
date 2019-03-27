@@ -85,7 +85,7 @@ namespace SeaBattle.Server.Models.Commands
                                                           $@"Игра завершена.
 Победитель: {winnerName}
 
-Подробности: {GetGameUrl(playedGame)}");
+Подробности: {Utils.GetGameUrl(playedGame)}");
 
             if (player1.Id != player2.Id)
             {
@@ -93,13 +93,8 @@ namespace SeaBattle.Server.Models.Commands
                                                               $@"Игра завершена.
 Победитель: {winnerName}
 
-Подробности: {GetGameUrl(playedGame)}");
+Подробности: {Utils.GetGameUrl(playedGame)}");
             }
-        }
-
-        private string GetGameUrl(PlayedGame game)
-        {
-            return $"{Utils.CurrentApplicationUrl}game/get/{game.Id}";
         }
     }
 }

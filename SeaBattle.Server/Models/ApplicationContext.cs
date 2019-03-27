@@ -12,6 +12,8 @@ namespace SeaBattle.Server.Models
         
         public DbSet<SeaBattle.Server.Entities.Participant> Participants { get; set; }
         
+        public DbSet<Statistic> Statistic { get; set; }
+        
         public DbSet<PlayedGame> PlayedGames { get; set; }
         
         protected override void OnModelCreating(ModelBuilder modelBuilder)

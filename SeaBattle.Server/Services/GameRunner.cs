@@ -45,9 +45,16 @@ namespace SeaBattle.Server.Services
             
             var newGame = new PlayedGame
                           {
+                              Rated = ratedGame,
                               Result = JsonConvert.SerializeObject(new SerializableGameResult(gameResult))
                           };
             _dbContext.PlayedGames.Add(newGame);
+
+            if (ratedGame)
+            {
+                await UpdatePlayerStatistic(player1, gameResult);
+                await UpdatePlayerStatistic(player2, gameResult);
+            }
 
             var saved = false;
 
@@ -65,6 +72,38 @@ namespace SeaBattle.Server.Services
             }
 
             return (newGame, gameResult);
+        }
+
+        private async Task UpdatePlayerStatistic(Participant participant, GameResult gameResult)
+        {
+            var participantStatistic = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant.Id);
+            
+            if (participantStatistic == null)
+            {
+                participantStatistic = new Statistic
+                                        {
+                                            Wins = 0,
+                                            Losses = 0,
+                                            Rating = 1000,
+                                            GamesPlayed = 0,
+                                            Participant = participant
+                                        };
+
+                _dbContext.Statistic.Add(participantStatistic);
+            }
+
+            participantStatistic.GamesPlayed = participantStatistic.GamesPlayed + 1;
+            
+            if (gameResult.Winner.Id == participant.Id)
+            {
+                participantStatistic.Wins = participantStatistic.Wins + 1;
+                participantStatistic.Rating = participantStatistic.Rating + 25;
+            }
+            else
+            {
+                participantStatistic.Losses = participantStatistic.Losses + 1;
+                participantStatistic.Rating = participantStatistic.Rating - 25;
+            }
         }
     }
 }

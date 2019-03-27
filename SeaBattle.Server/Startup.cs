@@ -1,5 +1,6 @@
 ﻿namespace SeaBattle.Server
 {
+    using FluentScheduler;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Models;
     using Models.Commands;
+    using Scheduling;
     using Services;
     using Services.Compile;
     using Services.Stats;
@@ -49,8 +51,9 @@
             services.AddSingleton<ICommand, PlayersCommand>();
             services.AddSingleton<ICommand, PlayerStatsCommand>();
             services.AddSingleton<ICommand, DuelCommand>();
+            services.AddSingleton<ICommand, MyLast20GamesCommand>();
             
-            services.AddSingleton<IUpdateHandler, UpdateHandler>();
+            services.AddSingleton<IBotUpdateHandler, BotUpdateHandler>();
             services.AddSingleton<IBotService, BotService>();
             services.AddSingleton<IStatisticsService, StatisticsService>();
             services.AddSingleton<IStrategyCompiler, StrategyCompiler>();
@@ -74,11 +77,15 @@
             services.AddTransient<IStateMachine<UpdateNameState>, UpdateNameStateMachine>();
 
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
+            
+            JobManager.Initialize(new JobsRegistry(services.BuildServiceProvider()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            Utils.DebugMode = env.IsDevelopment();
+            
             app.Use((context, next) =>
                     {
                         if (Utils.CurrentApplicationUrl == null)

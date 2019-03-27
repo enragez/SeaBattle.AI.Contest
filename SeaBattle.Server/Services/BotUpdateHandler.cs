@@ -7,13 +7,13 @@ namespace SeaBattle.Server.Services
     using Telegram.Bot.Types;
     using Telegram.Bot.Types.Enums;
 
-    public class UpdateHandler : IUpdateHandler
+    public class BotUpdateHandler : IBotUpdateHandler
     {
         private readonly Dictionary<string, ICommand> _commands;
 
         private readonly IEnumerable<IServiceWithState> _statefullServices;
 
-        public UpdateHandler(IEnumerable<ICommand> commands, 
+        public BotUpdateHandler(IEnumerable<ICommand> commands, 
                              IEnumerable<IServiceWithState> statefullServices)
         {
             _statefullServices = statefullServices;

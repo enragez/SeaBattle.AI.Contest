@@ -8,5 +8,7 @@ namespace SeaBattle.Server.Services
         TelegramBotClient Client { get; }
 
         Task SetWebhook();
+        
+        long ChannelId { get; }
     }
 }

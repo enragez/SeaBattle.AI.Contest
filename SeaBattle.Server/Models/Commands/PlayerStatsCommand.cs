@@ -55,7 +55,7 @@ namespace SeaBattle.Server.Models.Commands
                 return;
             }
             
-            var stats = _statsService.Get(player);
+            var stats = await _statsService.GetAsync(player);
 
             await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, stats);
         }

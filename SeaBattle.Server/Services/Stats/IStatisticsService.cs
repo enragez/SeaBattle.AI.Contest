@@ -1,9 +1,10 @@
 namespace SeaBattle.Server.Services.Stats
 {
+    using System.Threading.Tasks;
     using Entities;
 
     public interface IStatisticsService
     {
-        string Get(Participant participant);
+        Task<string> GetAsync(Participant participant);
     }
 }

@@ -8,18 +8,18 @@ namespace SeaBattle.Server.Controllers
     [Route("api/[controller]")]
     public class UpdateController : Controller
     {
-        private readonly IUpdateHandler _updateHandler;
+        private readonly IBotUpdateHandler _botUpdateHandler;
 
-        public UpdateController(IUpdateHandler updateHandler)
+        public UpdateController(IBotUpdateHandler botUpdateHandler)
         {
-            _updateHandler = updateHandler;
+            _botUpdateHandler = botUpdateHandler;
         }
 
         // POST api/update
         [HttpPost]
         public async Task<IActionResult> Post([FromBody]Update update)
         {
-            await _updateHandler.Handle(update);
+            await _botUpdateHandler.Handle(update);
             return Ok();
         }
     }

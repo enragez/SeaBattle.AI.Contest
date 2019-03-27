@@ -1,12 +1,15 @@
 namespace SeaBattle.Server
 {
     using System.Linq;
+    using Entities;
     using Telegram.Bot.Types;
     using Telegram.Bot.Types.Enums;
 
     public static class Utils
     {
         internal const string BotUserName = "SeaBattleAIContestBot";
+
+        internal static bool DebugMode;
 
         internal static string CurrentApplicationUrl;
 
@@ -39,6 +42,11 @@ namespace SeaBattle.Server
             }
 
             return true;
+        }
+        
+        internal static string GetGameUrl(PlayedGame game)
+        {
+            return $"{CurrentApplicationUrl}game/get/{game.Id}";
         }
     }
 }

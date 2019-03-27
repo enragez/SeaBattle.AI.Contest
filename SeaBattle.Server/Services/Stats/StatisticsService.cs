@@ -1,13 +1,25 @@
 namespace SeaBattle.Server.Services.Stats
 {
     using System.Text;
-    using Entities;
+    using System.Threading.Tasks;
+    using Microsoft.EntityFrameworkCore;
+    using Models;
+    using Participant = Entities.Participant;
 
     public class StatisticsService : IStatisticsService
     {
-        public string Get(Participant participant)
+        private readonly ApplicationContext _dbContext;
+
+        public StatisticsService(ApplicationContext dbContext)
         {
-            if (participant.Statistic == null)
+            _dbContext = dbContext;
+        }
+        
+        public async Task<string> GetAsync(Participant participant)
+        {
+            var statistic = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant.Id);
+            
+            if (statistic == null)
             {
                 return @"Статистика не найдена.
 Возможно игрок не зарегистрирован или пока не учавствовал в играх с учетом статистики.";
@@ -15,10 +27,10 @@ namespace SeaBattle.Server.Services.Stats
             
             var message = new StringBuilder($"Статистика игрока {participant.Name}, Id {participant.Id}");
             message.AppendLine();
-            message.AppendLine($"Игр сыграно: {participant.Statistic.GamesPlayed}");
-            message.AppendLine($"Побед: {participant.Statistic.Wins}");
-            message.AppendLine($"Поражений: {participant.Statistic.Losses}");
-            message.AppendLine($"Рейтинг: {participant.Statistic.Rating}");
+            message.AppendLine($"Игр сыграно: {statistic.GamesPlayed}");
+            message.AppendLine($"Побед: {statistic.Wins}");
+            message.AppendLine($"Поражений: {statistic.Losses}");
+            message.AppendLine($"Рейтинг: {statistic.Rating}");
 
             return message.ToString();
         }
