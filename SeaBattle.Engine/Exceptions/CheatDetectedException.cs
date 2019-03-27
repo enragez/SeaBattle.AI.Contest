@@ -4,10 +4,6 @@ namespace SeaBattle.Engine.Exceptions
 
     public class CheatDetectedException : Exception
     {
-        public CheatDetectedException()
-        {
-        }
-        
         public CheatDetectedException(string message)
             : base(message)
         {

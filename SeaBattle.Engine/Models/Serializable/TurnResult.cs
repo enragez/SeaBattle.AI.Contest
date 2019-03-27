@@ -10,24 +10,24 @@ namespace SeaBattle.Engine.Models.Serializable
         
         public CellState NewCellState { get; internal set; }
         
-        public int PlayerId { get; }
+        public int IngameId { get; }
         
         internal int ParticipantId { get; }
         
         internal int Id { get; }
         
-        internal TurnResult(Coordinate coordinate, int playerId, int participantId, int id)
+        internal TurnResult(Coordinate coordinate, int ingameId, int participantId, int id)
         {
             Coordinate = coordinate;
             NewCellState = CellState.Empty;
-            PlayerId = playerId;
+            IngameId = ingameId;
             ParticipantId = participantId;
             Id = id;
         }
 
         public override string ToString()
         {
-            return $"Player: {PlayerId}, Row: {Coordinate.Row}, Column: {Coordinate.Column}, Result: {NewCellState}";
+            return $"Player: {IngameId}, Row: {Coordinate.Row}, Column: {Coordinate.Column}, Result: {NewCellState}";
         }
     }
 }

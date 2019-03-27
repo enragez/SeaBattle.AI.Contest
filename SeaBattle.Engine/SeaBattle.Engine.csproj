@@ -44,7 +44,6 @@
         <Compile Include="Enums\CellState.cs" />
         <Compile Include="Enums\GamePhase.cs" />
         <Compile Include="Exceptions\CheatDetectedException.cs" />
-        <Compile Include="Exceptions\InvalidShipLocationException.cs" />
         <Compile Include="Models\Coordinate.cs" />
         <Compile Include="Models\ExtendedTurnResult.cs" />
         <Compile Include="Models\Field\Cell.cs" />

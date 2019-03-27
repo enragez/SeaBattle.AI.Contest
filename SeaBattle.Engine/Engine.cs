@@ -14,6 +14,8 @@ namespace SeaBattle.Engine
 
     public class Engine
     {
+        private readonly Random _random = new Random();
+        
         private Player _player1;
 
         private Player _player2;
@@ -121,31 +123,27 @@ namespace SeaBattle.Engine
 
             while (true)
             {
-                var turnResult = new TurnResult(turnCoordinates, _currentTurnPlayer.IngameId, _playerDtos[_currentTurnPlayer.IngameId].Id, turnCounter);
+                var turnResult = new TurnResult(turnCoordinates, 
+                                                _currentTurnPlayer.IngameId, 
+                                                _playerDtos[_currentTurnPlayer.IngameId].Id, 
+                                                turnCounter);
                 
                 if (!turn.IsValid())
                 {
-                    var currentTurnPlayerId = _currentTurnPlayer.IngameId;
-
                     turnResult.NewCellState = CellState.Empty;
-                    _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
 
-                    var extendedTurnRes = new ExtendedTurnResult
-                                          {
-                                              Id = turnCounter,
-                                              PlayerId = _currentTurnPlayer.IngameId,
-                                              ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
-                                          };
-                    extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Empty);
-                    _turnsHistory.Enqueue(extendedTurnRes);
+                    AddTurnToHistory(turnResult, turnCounter,
+                                     extendedTurnRes =>
+                                     {
+                                         extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Empty);
+                                     });
                     
                     if (IsBothPlayersReachedTurnsLimit())
                     {
                         return FinishGameByTurnsLimit();
                     }
 
-                    _currentTurnPlayer = GetPlayer(SwapId(currentTurnPlayerId));
-                    _enemyPlayer = GetPlayer(currentTurnPlayerId);
+                    PassTurnToAnotherPlayer();
 
                     turnCoordinates = _currentTurnPlayer.Strategy.DoTurn(turnResult);
                     continue;
@@ -158,21 +156,18 @@ namespace SeaBattle.Engine
                     if (TurnKillsEnemyShip(_enemyPlayer, turn))
                     {
                         PerformKill(_currentTurnPlayer, _enemyPlayer, turn, out var killedShipCoordinates);
+                        
                         turnResult.NewCellState = CellState.Kill;
-                        _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
-                        
-                        var extendedTurnRes = new ExtendedTurnResult
-                                              {
-                                                  Id = turnCounter,
-                                                  PlayerId = _currentTurnPlayer.IngameId,
-                                                  ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
-                                              };
-                        foreach (var coordinate in killedShipCoordinates)
-                        {
-                            extendedTurnRes.ChangedCells.Add(coordinate, CellState.Kill);
-                        }
-                        
-                        _turnsHistory.Enqueue(extendedTurnRes);
+
+                        AddTurnToHistory(turnResult, turnCounter,
+                                         extendedTurnRes =>
+                                         {
+                                             foreach (var coordinate in killedShipCoordinates)
+                                             {
+                                                 extendedTurnRes.ChangedCells.Add(coordinate,
+                                                                                  CellState.Kill);
+                                             }
+                                         });
                         
                         if (IsBothPlayersReachedTurnsLimit())
                         {
@@ -187,16 +182,12 @@ namespace SeaBattle.Engine
                     else
                     {
                         turnResult.NewCellState = CellState.Hit;
-                        _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
-                        
-                        var extendedTurnRes = new ExtendedTurnResult
-                                              {
-                                                  Id = turnCounter,
-                                                  PlayerId = _currentTurnPlayer.IngameId,
-                                                  ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
-                                              };
-                        extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Hit);
-                        _turnsHistory.Enqueue(extendedTurnRes);
+
+                        AddTurnToHistory(turnResult, turnCounter,
+                                         extendedTurnRes =>
+                                         {
+                                             extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Hit);
+                                         });
                         
                         if (IsBothPlayersReachedTurnsLimit())
                         {
@@ -208,26 +199,19 @@ namespace SeaBattle.Engine
                 {
                     PerformMiss(_currentTurnPlayer, _enemyPlayer, turn);
                     turnResult.NewCellState = CellState.Miss;
-                    _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
-                    
-                    var extendedTurnRes = new ExtendedTurnResult
-                                          {
-                                              Id = turnCounter,
-                                              PlayerId = _currentTurnPlayer.IngameId,
-                                              ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
-                                          };
-                    extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Miss);
-                    _turnsHistory.Enqueue(extendedTurnRes);
+
+                    AddTurnToHistory(turnResult, turnCounter,
+                                     extendedTurnRes =>
+                                     {
+                                         extendedTurnRes.ChangedCells.Add(turnResult.Coordinate, CellState.Miss);
+                                     });
                     
                     if (IsBothPlayersReachedTurnsLimit())
                     {
                         return FinishGameByTurnsLimit();
                     }
 
-                    var currentTurnPlayerId = _currentTurnPlayer.IngameId;
-
-                    _currentTurnPlayer = GetPlayer(SwapId(currentTurnPlayerId));
-                    _enemyPlayer = GetPlayer(currentTurnPlayerId);
+                    PassTurnToAnotherPlayer();
                 }
 
                 turnCoordinates = _currentTurnPlayer.Strategy.DoTurn(turnResult);
@@ -236,6 +220,29 @@ namespace SeaBattle.Engine
             }
         }
 
+        private void AddTurnToHistory(TurnResult turnResult, int turnCounter, Action<ExtendedTurnResult> changedCellsFiller)
+        {
+            _currentTurnPlayer.TurnsHistory.Enqueue(turnResult);
+                    
+            var extendedTurnRes = new ExtendedTurnResult
+                                  {
+                                      Id = turnCounter,
+                                      PlayerId = _currentTurnPlayer.IngameId,
+                                      ParticipantId = _playerDtos[_currentTurnPlayer.IngameId].Id
+                                  };
+
+            changedCellsFiller(extendedTurnRes);
+            _turnsHistory.Enqueue(extendedTurnRes);
+        }
+
+        private void PassTurnToAnotherPlayer()
+        {
+            var currentTurnPlayerId = _currentTurnPlayer.IngameId;
+
+            _currentTurnPlayer = GetPlayer(SwapId(currentTurnPlayerId));
+            _enemyPlayer = GetPlayer(currentTurnPlayerId);
+        }
+        
         private Player GetPlayer(int playerId)
         {
             return playerId == 0 ? _player1 : _player2;
@@ -243,15 +250,15 @@ namespace SeaBattle.Engine
 
         private bool TurnHitsEnemy(Player enemy, Turn turn)
         {
-            return enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Unit ||
-                   enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Hit ||
-                   enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Kill;
+            return enemy.Field[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Unit ||
+                   enemy.Field[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Hit ||
+                   enemy.Field[turn.Coordinate.Row, turn.Coordinate.Column].State == CellState.Kill;
         }
 
         private void PerformHit(Player player, Player enemy, Turn turn)
         {
-            enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Hit);
-            player.EnemyField.Cells[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Hit);
+            enemy.Field[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Hit);
+            player.EnemyField[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Hit);
         }
 
         private bool TurnKillsEnemyShip(Player enemy, Turn turn)
@@ -273,7 +280,7 @@ namespace SeaBattle.Engine
                 if (attackedShip != null)
                 {
                     return attackedShip.Coordinates.All(coordinate =>
-                            enemy.Field.Cells[coordinate.Row, coordinate.Column].State == CellState.Hit);
+                            enemy.Field[coordinate.Row, coordinate.Column].State == CellState.Hit);
                 }
             }
 
@@ -303,8 +310,8 @@ namespace SeaBattle.Engine
                     
                     foreach (var attackedShipCoordinate in attackedShip.Coordinates)
                     {
-                        enemy.Field.Cells[attackedShipCoordinate.Row, attackedShipCoordinate.Column].UpdateState(CellState.Kill);
-                        player.EnemyField.Cells[attackedShipCoordinate.Row, attackedShipCoordinate.Column].UpdateState(CellState.Kill);
+                        enemy.Field[attackedShipCoordinate.Row, attackedShipCoordinate.Column].UpdateState(CellState.Kill);
+                        player.EnemyField[attackedShipCoordinate.Row, attackedShipCoordinate.Column].UpdateState(CellState.Kill);
                     }
                 }
             }
@@ -312,8 +319,8 @@ namespace SeaBattle.Engine
 
         private void PerformMiss(Player player, Player enemy, Turn turn)
         {
-            enemy.Field.Cells[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Miss);
-            player.EnemyField.Cells[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Miss);
+            enemy.Field[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Miss);
+            player.EnemyField[turn.Coordinate.Row, turn.Coordinate.Column].UpdateState(CellState.Miss);
         }
 
         private bool IsPlayerLost(int playerId)
@@ -372,7 +379,7 @@ namespace SeaBattle.Engine
         
         private int CoinFlip()
         {
-            return new Random().Next(0, 1);
+            return _random.Next(0, 1);
         }
 
         private int SwapId(int currentId)

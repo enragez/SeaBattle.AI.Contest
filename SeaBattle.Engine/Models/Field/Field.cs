@@ -38,6 +38,8 @@ namespace SeaBattle.Engine.Models.Field
         {
             _currentGamePhase = gamePhase;
         }
+        
+        internal Cell this[int row, int column] => Cells[row, column];
 
         public void SetShip(Ship ship)
         {
