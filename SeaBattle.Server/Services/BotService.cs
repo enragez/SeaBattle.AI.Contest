@@ -9,6 +9,8 @@ namespace SeaBattle.Server.Services
     {
         private readonly BotConfiguration _config;
 
+        private bool _webHookSetted;
+        
         public BotService(IOptions<BotConfiguration> config)
         {
             _config = config.Value;
@@ -19,7 +21,13 @@ namespace SeaBattle.Server.Services
         
         public async Task SetWebhook()
         {
+            if (_webHookSetted)
+            {
+                return;
+            }
+            
             await Client.SetWebhookAsync(_config.WebhookUrl);
+            _webHookSetted = true;
         }
 
         public long ChannelId => _config.ChannelId;

@@ -14,7 +14,7 @@ namespace SeaBattle.Server.Services
         private readonly IEnumerable<IServiceWithState> _statefullServices;
 
         public BotUpdateHandler(IEnumerable<ICommand> commands, 
-                             IEnumerable<IServiceWithState> statefullServices)
+                                IEnumerable<IServiceWithState> statefullServices)
         {
             _statefullServices = statefullServices;
 

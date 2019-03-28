@@ -14,6 +14,7 @@ namespace SeaBattle.Server.Services
     public class GameRunner : IGameRunner
     {
         private readonly ApplicationContext _dbContext;
+        
         private readonly IEloRatingCalculator _eloRatingCalculator;
 
         public GameRunner(ApplicationContext dbContext, IEloRatingCalculator eloRatingCalculator)

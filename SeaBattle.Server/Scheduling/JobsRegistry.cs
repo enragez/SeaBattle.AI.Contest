@@ -3,12 +3,27 @@ namespace SeaBattle.Server.Scheduling
     using System;
     using FluentScheduler;
     using Jobs;
+    using Models;
 
     public class JobsRegistry : Registry
     {
-        public JobsRegistry(IServiceProvider serviceProvider)
+        public JobsRegistry(IServiceProvider serviceProvider, GamesConfiguration config)
         {
-            Schedule(() => new GamesJob(serviceProvider)).ToRunNow().AndEvery(1).Minutes();
+            if (!config.Enabled)
+            {
+                return;
+            }
+
+            var job = Schedule(() => new GamesJob(serviceProvider));
+
+            if (config.StartNow)
+            {
+                job.ToRunNow().AndEvery(config.Interval).Minutes();
+            }
+            else
+            {
+                job.ToRunEvery(config.Interval).Minutes();
+            }
         }
     }
 }

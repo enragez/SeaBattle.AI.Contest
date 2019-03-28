@@ -79,8 +79,20 @@
             services.AddTransient<IStateMachine<UpdateNameState>, UpdateNameStateMachine>();
 
             services.Configure<BotConfiguration>(Configuration.GetSection("BotConfiguration"));
+            services.Configure<EloConfiguration>(Configuration.GetSection("EloConfiguration"));
+
+            var gamesConfig = Configuration.GetSection("GamesConfiguration");
             
-            JobManager.Initialize(new JobsRegistry(services.BuildServiceProvider()));
+            var gamesConfigModel = new GamesConfiguration
+                                   {
+                                       Enabled = bool.TryParse(gamesConfig["Enabled"], out var enabled) && enabled,
+                                       StartNow = bool.TryParse(gamesConfig["StartNow"], out var startNow) && startNow,
+                                       Interval = int.TryParse(gamesConfig["Interval"], out var interval)
+                                            ? interval
+                                            : 15
+                                   };
+            
+            JobManager.Initialize(new JobsRegistry(services.BuildServiceProvider(), gamesConfigModel));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -37,7 +37,12 @@ namespace SeaBattle.Server.Services.Compile
                 {
                     var text = await reader.ReadToEndAsync();
 
-                    if (text.Contains("System.Reflection"))
+                    if (text.Contains("System.Reflection") ||
+                        text.Contains("GetProperties") ||
+                        text.Contains("GetMethods") ||
+                        text.Contains("GetMethod") ||
+                        text.Contains("GetMember") ||
+                        text.Contains("GetMembers"))
                     {
                         throw new StrategyCompilationException("В стратегии присутствует рефлексия");
                     }
