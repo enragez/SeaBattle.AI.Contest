@@ -38,7 +38,7 @@ namespace SeaBattle.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Statistic",
+                name: "Statistics",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -51,9 +51,9 @@ namespace SeaBattle.Server.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Statistic", x => x.Id);
+                    table.PrimaryKey("PK_Statistics", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Statistic_Participants_ParticipantId",
+                        name: "FK_Statistics_Participants_ParticipantId",
                         column: x => x.ParticipantId,
                         principalTable: "Participants",
                         principalColumn: "Id",
@@ -82,8 +82,8 @@ namespace SeaBattle.Server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Statistic_ParticipantId",
-                table: "Statistic",
+                name: "IX_Statistics_ParticipantId",
+                table: "Statistics",
                 column: "ParticipantId",
                 unique: true);
 
@@ -99,7 +99,7 @@ namespace SeaBattle.Server.Migrations
                 name: "PlayedGames");
 
             migrationBuilder.DropTable(
-                name: "Statistic");
+                name: "Statistics");
 
             migrationBuilder.DropTable(
                 name: "StrategySources");

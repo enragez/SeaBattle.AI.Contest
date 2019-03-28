@@ -5,14 +5,12 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using SeaBattle.Server.Models;
+using SeaBattle.Server.Dal;
 
 namespace SeaBattle.Server.Migrations
 {
-    using Dal;
-
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20190327212143_InitialMigration")]
+    [Migration("20190328031035_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,7 +72,7 @@ namespace SeaBattle.Server.Migrations
                     b.HasIndex("ParticipantId")
                         .IsUnique();
 
-                    b.ToTable("Statistic");
+                    b.ToTable("Statistics");
                 });
 
             modelBuilder.Entity("SeaBattle.Server.Dal.Entities.StrategySource", b =>

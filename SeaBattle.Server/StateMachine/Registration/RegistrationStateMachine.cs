@@ -145,7 +145,7 @@ namespace SeaBattle.Server.StateMachine.Registration
             
             _dbContext.Participants.Add(participant);
 
-            _dbContext.Statistic.Add(new Statistic
+            _dbContext.Statistics.Add(new Statistic
                                       {
                                           Wins = 0,
                                           Losses = 0,

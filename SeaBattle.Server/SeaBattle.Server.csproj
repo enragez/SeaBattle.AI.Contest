@@ -6,6 +6,10 @@
         <RootNamespace>SeaBattle.Server</RootNamespace>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <PlatformTarget>AnyCPU</PlatformTarget>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="FluentScheduler" Version="5.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.App" />

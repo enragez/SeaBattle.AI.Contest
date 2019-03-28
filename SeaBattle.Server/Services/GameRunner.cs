@@ -69,7 +69,7 @@ namespace SeaBattle.Server.Services
                     
                     saved = true;
                 }
-                catch (DbUpdateConcurrencyException e)
+                catch (DbUpdateConcurrencyException)
                 {
                 }
             }
@@ -80,7 +80,7 @@ namespace SeaBattle.Server.Services
         private async Task UpdatePlayerStatistics(Participant participant1, Participant participant2,
                                                   GameResult gameResult)
         {
-            var participant1Stats = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant1.Id);
+            var participant1Stats = await _dbContext.Statistics.FirstOrDefaultAsync(s => s.ParticipantId == participant1.Id);
             
             if (participant1Stats == null)
             {
@@ -93,10 +93,10 @@ namespace SeaBattle.Server.Services
                                            Participant = participant1
                                        };
 
-                _dbContext.Statistic.Add(participant1Stats);
+                _dbContext.Statistics.Add(participant1Stats);
             }
             
-            var participant2Stats = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
+            var participant2Stats = await _dbContext.Statistics.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
             
             if (participant2Stats == null)
             {
@@ -109,7 +109,7 @@ namespace SeaBattle.Server.Services
                                         Participant = participant2
                                     };
 
-                _dbContext.Statistic.Add(participant2Stats);
+                _dbContext.Statistics.Add(participant2Stats);
             }
             
             participant1Stats.GamesPlayed = participant1Stats.GamesPlayed + 1;

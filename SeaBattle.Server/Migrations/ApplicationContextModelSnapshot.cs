@@ -2,12 +2,12 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using SeaBattle.Server.Dal;
 
 namespace SeaBattle.Server.Migrations
 {
-    using Dal;
-
     [DbContext(typeof(ApplicationContext))]
     partial class ApplicationContextModelSnapshot : ModelSnapshot
     {
@@ -70,7 +70,7 @@ namespace SeaBattle.Server.Migrations
                     b.HasIndex("ParticipantId")
                         .IsUnique();
 
-                    b.ToTable("Statistic");
+                    b.ToTable("Statistics");
                 });
 
             modelBuilder.Entity("SeaBattle.Server.Dal.Entities.StrategySource", b =>

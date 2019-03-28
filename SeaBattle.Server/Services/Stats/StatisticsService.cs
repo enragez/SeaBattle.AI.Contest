@@ -17,7 +17,7 @@ namespace SeaBattle.Server.Services.Stats
         
         public async Task<string> GetAsync(Participant participant)
         {
-            var statistic = await _dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant.Id);
+            var statistic = await _dbContext.Statistics.FirstOrDefaultAsync(s => s.ParticipantId == participant.Id);
             
             if (statistic == null)
             {

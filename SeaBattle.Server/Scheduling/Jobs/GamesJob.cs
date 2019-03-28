@@ -62,10 +62,10 @@ namespace SeaBattle.Server.Scheduling.Jobs
         private async Task StartGame(ApplicationContext dbContext, Participant participant1, Participant participant2)
         {
             var participant1Statistic =
-                await dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant1.Id);
+                await dbContext.Statistics.FirstOrDefaultAsync(s => s.ParticipantId == participant1.Id);
 
             var participant2Statistic =
-                await dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
+                await dbContext.Statistics.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
             
             // load last actual
             await dbContext.Entry(participant1).ReloadAsync();
@@ -87,10 +87,10 @@ vs
                              : participant2;
 
             var newParticipant1Statistic =
-                await dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant1.Id);
+                await dbContext.Statistics.FirstOrDefaultAsync(s => s.ParticipantId == participant1.Id);
 
             var newParticipant2Statistic =
-                await dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
+                await dbContext.Statistics.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
             
             await _botService.SendTextMessageAsync(_botService.ChannelId,
                                                           $@"Завершена автоматическая игра.

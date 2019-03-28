@@ -6,3 +6,4 @@ Release/
 SeaBattle.Server/bin/
 SeaBattle.Server/obj/
 packages/
+deploy/

@@ -23,7 +23,7 @@
         public async Task<IActionResult> Index()
         {
             var playerStats = await _dbContext.Participants.Join(
-                                                             _dbContext.Statistic,
+                                                             _dbContext.Statistics,
                                                              p => p.Id,
                                                              s => s.ParticipantId,
                                                              (p, s) => new
