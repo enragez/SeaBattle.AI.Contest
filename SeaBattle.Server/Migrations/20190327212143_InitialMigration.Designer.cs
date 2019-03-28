@@ -23,7 +23,7 @@ namespace SeaBattle.Server.Migrations
                 .HasAnnotation("ProductVersion", "2.2.3-servicing-35854")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("SeaBattle.Server.Entities.Participant", b =>
+            modelBuilder.Entity("SeaBattle.Server.Dal.Entities.Participant", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -39,7 +39,7 @@ namespace SeaBattle.Server.Migrations
                     b.ToTable("Participants");
                 });
 
-            modelBuilder.Entity("SeaBattle.Server.Entities.PlayedGame", b =>
+            modelBuilder.Entity("SeaBattle.Server.Dal.Entities.PlayedGame", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -54,7 +54,7 @@ namespace SeaBattle.Server.Migrations
                     b.ToTable("PlayedGames");
                 });
 
-            modelBuilder.Entity("SeaBattle.Server.Entities.Statistic", b =>
+            modelBuilder.Entity("SeaBattle.Server.Dal.Entities.Statistic", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -77,7 +77,7 @@ namespace SeaBattle.Server.Migrations
                     b.ToTable("Statistic");
                 });
 
-            modelBuilder.Entity("SeaBattle.Server.Entities.StrategySource", b =>
+            modelBuilder.Entity("SeaBattle.Server.Dal.Entities.StrategySource", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -95,17 +95,17 @@ namespace SeaBattle.Server.Migrations
                     b.ToTable("StrategySources");
                 });
 
-            modelBuilder.Entity("SeaBattle.Server.Entities.Statistic", b =>
+            modelBuilder.Entity("SeaBattle.Server.Dal.Entities.Statistic", b =>
                 {
-                    b.HasOne("SeaBattle.Server.Entities.Participant", "Participant")
+                    b.HasOne("SeaBattle.Server.Dal.Entities.Participant", "Participant")
                         .WithOne("Statistic")
-                        .HasForeignKey("SeaBattle.Server.Entities.Statistic", "ParticipantId")
+                        .HasForeignKey("SeaBattle.Server.Dal.Entities.Statistic", "ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("SeaBattle.Server.Entities.StrategySource", b =>
+            modelBuilder.Entity("SeaBattle.Server.Dal.Entities.StrategySource", b =>
                 {
-                    b.HasOne("SeaBattle.Server.Entities.Participant", "Participant")
+                    b.HasOne("SeaBattle.Server.Dal.Entities.Participant", "Participant")
                         .WithMany("StrategySources")
                         .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade);
