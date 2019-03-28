@@ -3,11 +3,15 @@ namespace SeaBattle.Server.StateMachine.Registration
     using System;
     using System.IO;
     using System.Threading.Tasks;
-    using Entities;
+    using Dal;
+    using Dal.Entities;
+    using Exceptions;
     using Models;
     using Services;
     using Services.Compile;
     using Telegram.Bot.Types;
+    using Utils;
+    using Participant = Dal.Entities.Participant;
 
     public class RegistrationStateMachine : IStateMachine<RegistrationState>
     {
@@ -45,7 +49,7 @@ namespace SeaBattle.Server.StateMachine.Registration
             }
             catch (Exception ex)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               $@"Возникла неизвестная ошибка:
 {ex.Message}
 
@@ -60,7 +64,7 @@ namespace SeaBattle.Server.StateMachine.Registration
                             {
                                 TelegramId = update.Message.From.Id
                             };
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                           "Пожалуйста, укажите ваше имя");
             State = RegistrationState.WaitingForName;
         }
@@ -69,12 +73,12 @@ namespace SeaBattle.Server.StateMachine.Registration
         {
             if (!Utils.IsUsernameValid(update.Message.Text, out var validationMessage))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, validationMessage);
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id, validationMessage);
                 return;
             }
             
             _registration.Name = update.Message.Text.Trim();
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                           @"Пришлите вашу стратегию. 
 Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
             
@@ -85,7 +89,7 @@ namespace SeaBattle.Server.StateMachine.Registration
         {
             if (update.Message.Document == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Пришлите вашу стратегию. 
 Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
                 return;
@@ -96,7 +100,7 @@ namespace SeaBattle.Server.StateMachine.Registration
             var extension = Path.GetExtension(file.FilePath);
             if (!extension.Equals(".zip"))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               "Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
                 return;
             }          
@@ -114,7 +118,7 @@ namespace SeaBattle.Server.StateMachine.Registration
                 }
                 catch (StrategyCompilationException ex)
                 {
-                    await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                    await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                                   $@"Ошибка компиляции стратегии: 
 
 {ex.Message}");
@@ -132,7 +136,7 @@ namespace SeaBattle.Server.StateMachine.Registration
                 return;
             }
 
-            var participant = new Entities.Participant
+            var participant = new Participant
                               {
                                   Name = _registration.Name,
                                   TelegramId = _registration.TelegramId,
@@ -159,7 +163,7 @@ namespace SeaBattle.Server.StateMachine.Registration
 
             await _dbContext.SaveChangesAsync();
             
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                           "Регистрация завершена");
 
             State = RegistrationState.Registered;

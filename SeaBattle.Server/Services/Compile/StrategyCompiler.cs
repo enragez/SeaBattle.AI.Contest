@@ -7,9 +7,9 @@ namespace SeaBattle.Server.Services.Compile
     using System.Linq;
     using System.Threading.Tasks;
     using Engine;
+    using Exceptions;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
-    using Models;
 
     public class StrategyCompiler : IStrategyCompiler
     {

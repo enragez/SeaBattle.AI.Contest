@@ -1,6 +1,7 @@
-namespace SeaBattle.Server.Models.Commands
+namespace SeaBattle.Server.Commands
 {
     using System.Threading.Tasks;
+    using Dal;
     using Microsoft.EntityFrameworkCore;
     using Services;
     using StateMachine.Registration;
@@ -32,7 +33,7 @@ namespace SeaBattle.Server.Models.Commands
             }
             else
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Вы уже зарегистрированы.
 
 Используйте команды:

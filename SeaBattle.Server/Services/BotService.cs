@@ -1,9 +1,10 @@
 namespace SeaBattle.Server.Services
 {
     using System.Threading.Tasks;
+    using Config;
     using Microsoft.Extensions.Options;
-    using Models;
     using Telegram.Bot;
+    using Telegram.Bot.Types;
 
     public class BotService : IBotService
     {
@@ -31,5 +32,10 @@ namespace SeaBattle.Server.Services
         }
 
         public long ChannelId => _config.ChannelId;
+
+        public async Task<Message> SendTextMessageAsync(long chatId, string text)
+        {
+            return await SendTextMessageAsync(chatId, text);
+        }
     }
 }

@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.Entities
+namespace SeaBattle.Server.Dal.Entities
 {
     public class Statistic
     {

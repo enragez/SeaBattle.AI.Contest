@@ -1,15 +1,15 @@
 namespace SeaBattle.Server.Services
 {
     using System.Threading.Tasks;
+    using Dal;
+    using Dal.Entities;
     using Engine;
     using Engine.Models;
     using Engine.Models.Serializable;
-    using Entities;
     using Microsoft.EntityFrameworkCore;
-    using Models;
     using Newtonsoft.Json;
     using Rating;
-    using Participant = Entities.Participant;
+    using Participant = Dal.Entities.Participant;
 
     public class GameRunner : IGameRunner
     {

@@ -1,12 +1,12 @@
 namespace SeaBattle.Server.StateMachine.UpdateName
 {
     using System;
-    using System.IO;
     using System.Threading.Tasks;
+    using Dal;
     using Microsoft.EntityFrameworkCore;
-    using Models;
     using Services;
     using Telegram.Bot.Types;
+    using Utils;
 
     public class UpdateNameStateMachine : IStateMachine<UpdateNameState>
     {
@@ -40,7 +40,7 @@ namespace SeaBattle.Server.StateMachine.UpdateName
             }
             catch (Exception ex)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               $@"Возникла неизвестная ошибка:
 {ex.Message}
                 
@@ -55,7 +55,7 @@ namespace SeaBattle.Server.StateMachine.UpdateName
             
             if (participant == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Вы не зарегистрированы.
 
 Для участия необходимо использовать команду /register");
@@ -63,7 +63,7 @@ namespace SeaBattle.Server.StateMachine.UpdateName
                 return;
             }
             
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, "Пожалуйста, укажите новое имя");
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id, "Пожалуйста, укажите новое имя");
             State = UpdateNameState.WaitingForName;
         }
 
@@ -71,7 +71,7 @@ namespace SeaBattle.Server.StateMachine.UpdateName
         {
             if (!Utils.IsUsernameValid(update.Message.Text, out var validationMessage))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, validationMessage);
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id, validationMessage);
                 return;
             }
             
@@ -93,7 +93,7 @@ namespace SeaBattle.Server.StateMachine.UpdateName
 
             await _dbContext.SaveChangesAsync();
             
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, "Ваше имя успешно изменено");
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id, "Ваше имя успешно изменено");
 
             State = UpdateNameState.Updated;
         }

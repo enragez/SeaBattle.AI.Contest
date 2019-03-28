@@ -1,7 +1,7 @@
 namespace SeaBattle.Server.Services.Stats
 {
     using System.Threading.Tasks;
-    using Entities;
+    using Dal.Entities;
 
     public interface IStatisticsService
     {

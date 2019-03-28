@@ -1,5 +1,8 @@
 ﻿namespace SeaBattle.Server
 {
+    using Commands;
+    using Config;
+    using Dal;
     using FluentScheduler;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
@@ -9,14 +12,13 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Models;
-    using Models.Commands;
     using Scheduling;
     using Services;
     using Services.Compile;
     using Services.Rating;
+    using Services.Registration;
     using Services.Stats;
-    using Services.UpdateNameService;
+    using Services.Updates;
     using StateMachine;
     using StateMachine.Registration;
     using StateMachine.UpdateName;
@@ -98,13 +100,13 @@
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            Utils.DebugMode = env.IsDevelopment();
+            Utils.Utils.DebugMode = env.IsDevelopment();
             
             app.Use((context, next) =>
                     {
-                        if (Utils.CurrentApplicationUrl == null)
+                        if (Utils.Utils.CurrentApplicationUrl == null)
                         {
-                            Utils.CurrentApplicationUrl = context.Request.GetDisplayUrl();
+                            Utils.Utils.CurrentApplicationUrl = context.Request.GetDisplayUrl();
                         }
                         
                         return next.Invoke();

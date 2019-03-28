@@ -1,13 +1,15 @@
-namespace SeaBattle.Server.Models.Commands
+namespace SeaBattle.Server.Commands
 {
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Dal;
     using Engine.Models.Serializable;
     using Microsoft.EntityFrameworkCore;
     using Newtonsoft.Json;
     using Services;
     using Telegram.Bot.Types;
+    using Utils;
 
     public class MyLast20GamesCommand : ICommand
     {
@@ -29,7 +31,7 @@ namespace SeaBattle.Server.Models.Commands
 
             if (player == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Вы не зарегистрированы.
 
 Для участия необходимо использовать команду /register");
@@ -51,7 +53,7 @@ namespace SeaBattle.Server.Models.Commands
             
             if (playerGames.Count == 0)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, "Игры не найдены");
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id, "Игры не найдены");
                 return;
             }
 
@@ -70,7 +72,7 @@ namespace SeaBattle.Server.Models.Commands
                 message.AppendLine($"Игра #{dto.Game.Id}. {winMessage}. {Utils.GetGameUrl(dto.Game)}");
             }
             
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, message.ToString());
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id, message.ToString());
         }
     }
 }

@@ -1,9 +1,9 @@
 namespace SeaBattle.Server.Services
 {
     using System.Threading.Tasks;
+    using Dal.Entities;
     using Engine.Models;
-    using Entities;
-    using Participant = Entities.Participant;
+    using Participant = Dal.Entities.Participant;
 
     public interface IGameRunner
     {

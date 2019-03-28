@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.Models.Commands
+namespace SeaBattle.Server.Commands
 {
     using System.Threading.Tasks;
     using Telegram.Bot.Types;

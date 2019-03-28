@@ -1,9 +1,9 @@
 namespace SeaBattle.Server.Scheduling
 {
     using System;
+    using Config;
     using FluentScheduler;
     using Jobs;
-    using Models;
 
     public class JobsRegistry : Registry
     {

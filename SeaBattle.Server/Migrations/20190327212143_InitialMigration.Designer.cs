@@ -9,6 +9,8 @@ using SeaBattle.Server.Models;
 
 namespace SeaBattle.Server.Migrations
 {
+    using Dal;
+
     [DbContext(typeof(ApplicationContext))]
     [Migration("20190327212143_InitialMigration")]
     partial class InitialMigration

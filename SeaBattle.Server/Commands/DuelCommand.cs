@@ -1,10 +1,11 @@
-namespace SeaBattle.Server.Models.Commands
+namespace SeaBattle.Server.Commands
 {
     using System.Threading.Tasks;
-    using Entities;
+    using Dal;
     using Microsoft.EntityFrameworkCore;
     using Services;
     using Telegram.Bot.Types;
+    using Utils;
 
     public class DuelCommand : ICommand
     {
@@ -29,7 +30,7 @@ namespace SeaBattle.Server.Models.Commands
             
             if (player1 == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Вы не зарегистрированы.
 
 Для участия необходимо использовать команду /register");
@@ -39,7 +40,7 @@ namespace SeaBattle.Server.Models.Commands
             var playerId = Utils.GetCommandArgument(update);
             if (string.IsNullOrWhiteSpace(playerId))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Необходимо указать идентификатор игрока.
 
 Для получения идентификаторов необходимо использовать команду /players");
@@ -48,7 +49,7 @@ namespace SeaBattle.Server.Models.Commands
 
             if (!int.TryParse(playerId, out var id))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Идентификатор должен быть числом.
 
 Для получения идентификаторов необходимо использовать команду /players");
@@ -59,19 +60,19 @@ namespace SeaBattle.Server.Models.Commands
 
             if (player2 == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               $@"Игрок с идентификатором {id} не найден.
 
 Для получения идентификаторов необходимо использовать команду /players");
                 return;
             }
 
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                           $"Дуэль между игроками {player1.Name} и {player2.Name} запущена");
 
             if (player1.Id != player2.Id)
             {
-                await _botService.Client.SendTextMessageAsync((long) player2.TelegramId,
+                await _botService.SendTextMessageAsync((long) player2.TelegramId,
                                                               $"Игрок {player1.Name} вызвал вас на дуэль");
             }
 
@@ -81,7 +82,7 @@ namespace SeaBattle.Server.Models.Commands
                                  ? player1.Name
                                  : player2.Name;
 
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                           $@"Игра завершена.
 Победитель: {winnerName}
 
@@ -89,7 +90,7 @@ namespace SeaBattle.Server.Models.Commands
 
             if (player1.Id != player2.Id)
             {
-                await _botService.Client.SendTextMessageAsync((long) player2.TelegramId,
+                await _botService.SendTextMessageAsync((long) player2.TelegramId,
                                                               $@"Игра завершена.
 Победитель: {winnerName}
 

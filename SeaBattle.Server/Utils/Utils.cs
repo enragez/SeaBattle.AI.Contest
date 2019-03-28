@@ -1,7 +1,7 @@
-namespace SeaBattle.Server
+namespace SeaBattle.Server.Utils
 {
     using System.Linq;
-    using Entities;
+    using Dal.Entities;
     using Telegram.Bot.Types;
     using Telegram.Bot.Types.Enums;
 

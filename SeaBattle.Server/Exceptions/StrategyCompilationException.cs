@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.Models
+namespace SeaBattle.Server.Exceptions
 {
     using System;
 

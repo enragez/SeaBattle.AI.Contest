@@ -1,8 +1,8 @@
 namespace SeaBattle.Server.Services.Rating
 {
     using System;
+    using Config;
     using Microsoft.Extensions.Options;
-    using Models;
 
     public class EloRatingCalculator : IEloRatingCalculator
     {

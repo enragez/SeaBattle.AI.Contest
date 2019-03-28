@@ -3,9 +3,10 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
     using System;
     using System.IO;
     using System.Threading.Tasks;
-    using Entities;
+    using Dal;
+    using Dal.Entities;
+    using Exceptions;
     using Microsoft.EntityFrameworkCore;
-    using Models;
     using Services;
     using Services.Compile;
     using Telegram.Bot.Types;
@@ -46,7 +47,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
             }
             catch (Exception ex)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               $@"Возникла неизвестная ошибка:
 {ex.Message}
                 
@@ -61,7 +62,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
             
             if (participant == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Вы не зарегистрированы.
 
 Для участия необходимо использовать команду /register");
@@ -69,7 +70,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
                 return;
             }
             
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                           @"Пришлите вашу стратегию. 
 Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
             State = UpdateStrategyState.WaitingForStrategy;
@@ -79,7 +80,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
         {
             if (update.Message.Document == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Пришлите вашу стратегию. 
 Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
                 return;
@@ -90,7 +91,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
             var extension = Path.GetExtension(file.FilePath);
             if (!extension.Equals(".zip"))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               "Стратегии принимаются в формате .zip файла содержащего набор cs-файлов.");
                 return;
             }
@@ -108,7 +109,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
                 }
                 catch (StrategyCompilationException ex)
                 {
-                    await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                    await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                                   $@"Ошибка компиляции стратегии: 
 
 {ex.Message}");
@@ -116,7 +117,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
                 }
                 catch (Exception ex)
                 {
-                    await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                    await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                                   $@"Неизвестная ошибка при компиляции стратегии: 
 {ex.Message}");
                 }
@@ -145,7 +146,7 @@ namespace SeaBattle.Server.StateMachine.UpdateStrategy
 
             await _dbContext.SaveChangesAsync();
             
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                           "Стратегия успешно обновлена");
 
             State = UpdateStrategyState.Updated;

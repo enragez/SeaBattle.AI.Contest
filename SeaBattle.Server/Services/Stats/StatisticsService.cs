@@ -2,9 +2,9 @@ namespace SeaBattle.Server.Services.Stats
 {
     using System.Text;
     using System.Threading.Tasks;
+    using Dal;
     using Microsoft.EntityFrameworkCore;
-    using Models;
-    using Participant = Entities.Participant;
+    using Participant = Dal.Entities.Participant;
 
     public class StatisticsService : IStatisticsService
     {

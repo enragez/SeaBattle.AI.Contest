@@ -1,4 +1,4 @@
-namespace SeaBattle.Server
+namespace SeaBattle.Server.Utils
 {
     using System;
     using System.Collections.Generic;

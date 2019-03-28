@@ -3,9 +3,10 @@ namespace SeaBattle.Server.Services
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using Models.Commands;
+    using Commands;
     using Telegram.Bot.Types;
     using Telegram.Bot.Types.Enums;
+    using Utils;
 
     public class BotUpdateHandler : IBotUpdateHandler
     {

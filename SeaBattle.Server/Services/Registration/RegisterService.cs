@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.Services
+namespace SeaBattle.Server.Services.Registration
 {
     using System;
     using System.Collections.Concurrent;

@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.Models
+namespace SeaBattle.Server.Dal
 {
     using Entities;
     using Microsoft.EntityFrameworkCore;
@@ -10,7 +10,7 @@ namespace SeaBattle.Server.Models
         {
         }
         
-        public DbSet<SeaBattle.Server.Entities.Participant> Participants { get; set; }
+        public DbSet<Participant> Participants { get; set; }
         
         public DbSet<Statistic> Statistic { get; set; }
         

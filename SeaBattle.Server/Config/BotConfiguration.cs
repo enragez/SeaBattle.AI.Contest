@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.Models
+namespace SeaBattle.Server.Config
 {
     public class BotConfiguration
     {

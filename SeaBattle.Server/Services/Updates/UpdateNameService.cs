@@ -1,4 +1,4 @@
-namespace SeaBattle.Server.Services.UpdateNameService
+namespace SeaBattle.Server.Services.Updates
 {
     using System;
     using System.Collections.Concurrent;

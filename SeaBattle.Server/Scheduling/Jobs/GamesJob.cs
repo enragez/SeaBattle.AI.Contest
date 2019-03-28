@@ -3,12 +3,13 @@ namespace SeaBattle.Server.Scheduling.Jobs
     using System;
     using System.Linq;
     using System.Threading.Tasks;
+    using Dal;
     using FluentScheduler;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
-    using Models;
     using Services;
-    using Participant = Entities.Participant;
+    using Utils;
+    using Participant = Dal.Entities.Participant;
 
     public class GamesJob : IJob
     {
@@ -72,7 +73,7 @@ namespace SeaBattle.Server.Scheduling.Jobs
             await dbContext.Entry(participant1Statistic).ReloadAsync();
             await dbContext.Entry(participant2Statistic).ReloadAsync();
             
-            await _botService.Client.SendTextMessageAsync(_botService.ChannelId,
+            await _botService.SendTextMessageAsync(_botService.ChannelId,
                                                     $@"Запущена автоматическая игра:
 
 {participant1.Name} (Id: {participant1.Id}, Рейтинг: {participant1Statistic.Rating:F2}) 
@@ -91,7 +92,7 @@ vs
             var newParticipant2Statistic =
                 await dbContext.Statistic.FirstOrDefaultAsync(s => s.ParticipantId == participant2.Id);
             
-            await _botService.Client.SendTextMessageAsync(_botService.ChannelId,
+            await _botService.SendTextMessageAsync(_botService.ChannelId,
                                                           $@"Завершена автоматическая игра.
 
 {participant1.Name} (Id: {participant1.Id}, Обновленный рейтинг: {newParticipant1Statistic.Rating:F2})

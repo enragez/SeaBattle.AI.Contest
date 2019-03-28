@@ -1,9 +1,10 @@
 namespace SeaBattle.Server.Controllers
 {
     using System.Threading.Tasks;
+    using Dal;
+    using Dal.Entities;
     using Engine.Models;
     using Engine.Models.Serializable;
-    using Entities;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Models;
@@ -42,6 +43,11 @@ namespace SeaBattle.Server.Controllers
 
         public async Task<ActionResult> GetTurn(int id, int turn)
         {
+            if (turn < 0)
+            {
+                return NotFound();
+            }
+            
             var game = await _dbContext.PlayedGames.FirstOrDefaultAsync(g => g.Id == id);
             if (game == null)
             {

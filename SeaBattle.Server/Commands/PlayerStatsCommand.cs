@@ -1,10 +1,12 @@
-namespace SeaBattle.Server.Models.Commands
+namespace SeaBattle.Server.Commands
 {
     using System.Threading.Tasks;
+    using Dal;
     using Microsoft.EntityFrameworkCore;
     using Services;
     using Services.Stats;
     using Telegram.Bot.Types;
+    using Utils;
 
     public class PlayerStatsCommand : ICommand
     {
@@ -28,7 +30,7 @@ namespace SeaBattle.Server.Models.Commands
             var playerId = Utils.GetCommandArgument(update);
             if (string.IsNullOrWhiteSpace(playerId))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Необходимо указать идентификатор игрока.
 
 Для получения идентификаторов необходимо использовать команду /players");
@@ -37,7 +39,7 @@ namespace SeaBattle.Server.Models.Commands
 
             if (!int.TryParse(playerId, out var id))
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               @"Идентификатор должен быть числом.
 
 Для получения идентификаторов необходимо использовать команду /players");
@@ -48,7 +50,7 @@ namespace SeaBattle.Server.Models.Commands
 
             if (player == null)
             {
-                await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id,
+                await _botService.SendTextMessageAsync(update.Message.Chat.Id,
                                                               $@"Игрок с идентификатором {id} не найден.
 
 Для получения идентификаторов необходимо использовать команду /players");
@@ -57,7 +59,7 @@ namespace SeaBattle.Server.Models.Commands
             
             var stats = await _statsService.GetAsync(player);
 
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, stats);
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id, stats);
         }
     }
 }

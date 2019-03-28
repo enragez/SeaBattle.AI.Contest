@@ -1,8 +1,9 @@
-namespace SeaBattle.Server.Models.Commands
+namespace SeaBattle.Server.Commands
 {
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Dal;
     using Microsoft.EntityFrameworkCore;
     using Services;
     using Telegram.Bot.Types;
@@ -39,7 +40,7 @@ namespace SeaBattle.Server.Models.Commands
                 message.AppendLine($"Имя: {pInfo.Name}, Id: {pInfo.Id}");
             }
 
-            await _botService.Client.SendTextMessageAsync(update.Message.Chat.Id, message.ToString());
+            await _botService.SendTextMessageAsync(update.Message.Chat.Id, message.ToString());
         }
     }
 }
